@@ -1,0 +1,21 @@
+.comment{
+    height: 100%;
+    overflow: hidden;
+    .add-comment{
+        display: flex;
+        align-items: center;
+        margin-bottom: 16px;
+        TextArea{
+            margin-right: 16px;
+            background-color: unset;
+        }
+    }
+    .list-comment{
+        height: 680px;
+        margin-bottom: 40px;
+        overflow-y: scroll;
+    }
+    .list-comment::-webkit-scrollbar {
+        display: none;
+    }
+}

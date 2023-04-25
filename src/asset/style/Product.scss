@@ -1,0 +1,46 @@
+.product-page{
+    display: flex;
+    .filter{
+        margin-top: 24px;
+        width: 15%;
+        height: 600px;
+        margin-right: 16px;
+    }
+    .product{
+        width: 85%;
+        height: 100%;
+        margin-top: 8px;
+        .banner{
+    
+        }
+        .category{
+            width: 100%;
+            .category-title{
+                font-size: 24px;
+                margin: 24px 0px;
+            }
+            .item{
+                margin: 4px;
+                border-radius: unset;
+                img{
+                    border-radius: unset;
+                }
+            }
+        }
+    
+        .feature-style{
+            width: 100%;
+            .feature-style-title{
+                font-size: 24px;
+                margin: 24px 0px;
+            }
+            .feature-style-item{
+                margin: 4px;
+                border-radius: unset;
+                img{
+                    border-radius: unset;
+                }
+            }
+        }
+    }    
+}

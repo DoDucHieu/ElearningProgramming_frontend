@@ -1,0 +1,58 @@
+.my-infor{
+    width: 100%;
+    display: flex;
+    .my-infor-left{
+        width: 30%;
+        .upload{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 12px;
+            margin-right: 40px;
+            .custom-file-upload{
+                margin-top: 16px;
+                width: 64px;
+                height: 64px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                border-radius: 3px;
+                border: 1px solid rgb(235, 235, 235);
+                background-color: rgba(163, 160, 160, 0.1);
+                cursor: pointer;
+                border-radius: 15px;
+            }
+            input{
+                display: none;
+            }
+            .preview-img{
+                margin-top: 32px;
+                width: 200px;
+                height: 200px;
+                border-radius: 50%;
+                object-fit: cover;
+            }
+        }
+    }
+    .my-infor-center{
+        width: 40%;
+        margin-top: 40px;
+    }
+    .my-infor-right{
+        width: 30%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding-left: 80px;
+
+        .change-info{
+            width: 50%;
+            height: 40px;
+        }
+        .change-password{
+            margin-top: 40px;
+            width: 50%;
+            height: 40px;
+        }
+    }
+}

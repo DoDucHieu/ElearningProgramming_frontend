@@ -1,0 +1,46 @@
+.layout-user{
+    .ant-layout-header{
+        width: 100%;
+        padding: 0;
+        background-color: #ffffff;
+        position: fixed;
+        z-index: 1000;
+        display: flex;
+        align-items: center !important;
+        .logo{
+
+        }
+        .header-menu{
+            display: flex;
+            width: 100%;
+            .menu-left{
+                width: 70%;
+                .ant-menu-overflow{
+                    width: 100%;
+                    .ant-menu-overflow-item{
+                        width: 15%;
+                    }
+                }
+            }
+            .menu-right{
+                width: 30%;
+                .ant-menu-overflow{
+                    width: 100%;
+                    display: flex;
+                    justify-content: right;
+                }
+            }
+        }
+    }
+    .ant-layout-content{
+        min-height: 86vh;
+        overflow-y: hidden;
+    }
+}
+
+.layout-admin{
+    .ant-layout-content{
+        height: 100vh;
+        overflow-y: hidden;
+    }
+}

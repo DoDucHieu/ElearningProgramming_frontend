@@ -1,0 +1,17 @@
+.new-component{
+    .new-infor{
+        width: 100%;
+        display: flex;
+        .new-name{
+            width: 80%;
+            overflow-x: hidden;
+        }
+        .new-view{
+            width: 20%;
+            text-align: right;
+            .view-number{
+                margin-left: 4px;
+            }
+        }
+    }
+}

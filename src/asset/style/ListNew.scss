@@ -1,0 +1,25 @@
+.list-new{
+    width: 100%;
+    .list-new-header{
+        width: 100%;
+        display: flex;
+        margin-bottom: 24px;
+        margin-top: 40px;
+        .list-new-title{
+            width: 80%;
+            font-size: 24px;
+        }
+        .btn-add-new{
+            width: 20%;
+            display: flex;
+            justify-content: right;
+        }
+    }
+    .item{
+        margin: 4px;
+        border-radius: unset;
+        img{
+            border-radius: unset;
+        }
+    }
+}
