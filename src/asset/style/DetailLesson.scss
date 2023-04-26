@@ -1,0 +1,17 @@
+.detail-lesson-user{
+    width: 100%;
+    .lesson-name{
+        width: 100%;
+        margin-left: 142px;
+        margin-top: 16px;
+    }
+    .lesson-content{
+        .lesson-content-video{
+            display: flex;
+            justify-content: center;
+        }
+        .lesson-content-post{
+            padding: 40px 80px;
+        }
+    }
+}

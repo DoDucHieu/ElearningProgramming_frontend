@@ -1,0 +1,16 @@
+.modal-detail-lesson{
+    .lesson-name{
+        width: 100%;
+        text-align: center;
+    }
+    .lesson-content{
+        padding: 40px 0px;
+        .lesson-content-video{
+            display: flex;
+            justify-content: center;
+        }
+        .lesson-content-post{
+            padding: 40px 80px;
+        }
+    }
+}

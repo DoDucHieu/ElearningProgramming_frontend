@@ -1,13 +1,9 @@
-import { ManageCategory } from '../pages/ManageCategory/ManageCategory';
 import { Home } from '../pages/Home/Home';
 import { ManageAccount } from '../pages/ManageAccount/ManageAccount';
 import { ManageOrder } from '../pages/ManageOrder/ManageOrder';
-import { ManageProduct } from '../pages/ManageProduct/ManageProduct';
-import { Product } from '../pages/Product/Product';
 import { SignIn } from '../pages/SignIn/SignIn';
 import { SignUp } from '../pages/SignUp/SignUp';
 import { ManageNews } from '../pages/ManageNew/ManageNews';
-import { DetailProduct } from '../pages/Product/DetailProduct';
 import { Cart } from '../pages/Cart/Cart';
 import { PaymentSuccess } from '../pages/Payment/PaymentSuccess';
 import { PaymentCancel } from '../pages/Payment/PaymentCancel';
@@ -16,7 +12,13 @@ import { Contact } from '../pages/Contact/Contact';
 import { MyInfor } from '../pages/MyInfor/MyInfor';
 import { DetailNew } from '../pages/News/DetailNew';
 import { ListNew } from '../pages/News/ListNew';
-import { ManageVideo } from '../pages/ManageVideo/ManageVdeo';
+import { ManageVideo } from '../pages/ManageVideo/ManageVideo';
+import { ListVideo } from '../pages/Video/ListVideo';
+import { DetailVideo } from '../pages/Video/DetailVideo';
+import { ManageCourse } from '../pages/ManageCourse/ManageCourse';
+import { ManageLesson } from '../pages/ManageLesson/ManageLesson';
+import { ListCourse } from '../pages/Course/ListCourse';
+import { DetailCourse } from '../pages/Course/DetailCourse';
 
 export const adminRoute = [
     {
@@ -24,12 +26,8 @@ export const adminRoute = [
         element: <ManageAccount />,
     },
     {
-        url: '/manage-product',
-        element: <ManageProduct />,
-    },
-    {
-        url: '/manage-category',
-        element: <ManageCategory />,
+        url: '/manage-course',
+        element: <ManageCourse />,
     },
     {
         url: '/manage-order',
@@ -42,6 +40,10 @@ export const adminRoute = [
     {
         url: '/manage-video',
         element: <ManageVideo />,
+    },
+    {
+        url: '/manage-lesson/:courseId',
+        element: <ManageLesson />,
     },
 ];
 
@@ -70,22 +72,31 @@ export const publicRoute = [
         element: <Home />,
     },
     {
-        url: '/product',
-        element: <Product />,
+        url: '/list-course',
+        element: <ListCourse />,
     },
-
     {
-        url: '/detail-product/:id',
-        element: <DetailProduct />,
+        url: '/detail-course/:_id',
+        element: <DetailCourse />,
     },
     {
         url: '/list-new',
         element: <ListNew />,
     },
     {
+        url: '/list-video',
+        element: <ListVideo />,
+    },
+    {
         url: '/detail-new/:_id',
         element: <DetailNew />,
     },
+
+    {
+        url: '/detail-video/:_id',
+        element: <DetailVideo />,
+    },
+
     {
         url: '/page',
         element: <Page />,

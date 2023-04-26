@@ -1,15 +1,15 @@
 import { Button, Col, Row } from 'antd';
 import '../../asset/style/ListNew.scss';
 import { NewsType } from '../../type/type';
-import { NewComponent } from './NewComponent';
 import { useEffect, useState } from 'react';
 import { CONSTANT } from '../../constant/constant';
 import { useSearchParams } from 'react-router-dom';
 import { SearchParams } from '../../type/common';
-import { newsApi } from '../../api/newsApi';
-import { ModalNews } from '../ManageNew/ModalNews';
+import { ModalVideo } from '../ManageVideo/ModalVideo';
+import { videoApi } from '../../api/videoApi';
+import { VideoComponent } from './VideoComponent';
 
-export const ListNew = (): React.ReactElement => {
+export const ListVideo = (): React.ReactElement => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const userAccessToken = user.accessToken;
     const [searchParams] = useSearchParams();
@@ -20,16 +20,16 @@ export const ListNew = (): React.ReactElement => {
     const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
 
     useEffect(() => {
-        handleGetAllNews({
+        handleGetAllVideo({
             page,
             size,
             keyword,
         });
     }, [page, size, keyword]);
 
-    const handleGetAllNews = async (params: SearchParams): Promise<any> => {
+    const handleGetAllVideo = async (params: SearchParams): Promise<any> => {
         try {
-            const res = await newsApi.getAll(params);
+            const res = await videoApi.getAll(params);
             if (res?.data?.data) {
                 setListNews(res.data.data);
             }
@@ -45,14 +45,14 @@ export const ListNew = (): React.ReactElement => {
     return (
         <div className="list-new">
             <div className="list-new-header">
-                <span className="list-new-title">Danh sách các bài viết</span>
+                <span className="list-new-title">Danh sách các video</span>
                 <div className="btn-add-new">
                     {userAccessToken && (
                         <Button
                             type="primary"
                             onClick={() => setIsOpenModal(true)}
                         >
-                            Đăng bài
+                            Đăng video
                         </Button>
                     )}
                 </div>
@@ -62,8 +62,8 @@ export const ListNew = (): React.ReactElement => {
                     listNews.map((item: NewsType) => {
                         return item?.is_approved ? (
                             <Col span={6}>
-                                <NewComponent
-                                    new_id={item._id}
+                                <VideoComponent
+                                    video_id={item._id}
                                     name={item?.name}
                                     view={item?.view}
                                     img_url={item?.img_url}
@@ -75,9 +75,9 @@ export const ListNew = (): React.ReactElement => {
                     })}
             </Row>
             {isOpenModal && (
-                <ModalNews
+                <ModalVideo
                     handleClose={handleClose}
-                    getAllNews={handleGetAllNews}
+                    getAllVideo={handleGetAllVideo}
                     typeModal={'add'}
                 />
             )}

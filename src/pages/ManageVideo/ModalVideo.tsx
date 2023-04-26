@@ -5,23 +5,23 @@ import { toast } from 'react-toastify';
 import { newsApi } from '../../api/newsApi';
 import { CONSTANT } from '../../constant/constant';
 import { SearchParams } from '../../type/common';
-import { NewsType } from '../../type/type';
+import { VideoType } from '../../type/type';
 import 'react-markdown-editor-lite/lib/index.css';
-import '../../asset/style/ModalNews.scss';
 import { v4 } from 'uuid';
 import { storage } from '../../firebaseConfig';
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
+import { videoApi } from '../../api/videoApi';
 
 type Props = {
     handleClose: () => void;
-    getAllNews?: (params: SearchParams) => Promise<any>;
+    getAllVideo?: (params: SearchParams) => Promise<any>;
     typeModal: string;
-    dataToModal?: NewsType;
+    dataToModal?: VideoType;
 };
 
 export const ModalVideo = ({
     handleClose,
-    getAllNews,
+    getAllVideo,
     typeModal,
     dataToModal,
 }: Props): React.ReactElement => {
@@ -31,81 +31,106 @@ export const ModalVideo = ({
     const [searchParams] = useSearchParams();
     const page = searchParams.get('page') || CONSTANT.DEFAULT_PAGE;
     const size = searchParams.get('size') || CONSTANT.DEFAULT_SIZE;
-    const [contentMarkdown, setContentMarkdown] = useState<any>('');
-    const [contentHTML, setContentHTML] = useState<any>('');
-    const [selectedFile, setSelectedFile] = useState<any>();
-    const [preview, setPreview] = useState<string>();
+    const [selectedVideo, setSelectedVideo] = useState<any>();
+    const [previewVideo, setPreviewVideo] = useState<any>();
+    const [selectedImage, setSelectedImage] = useState<any>();
+    const [previewImage, setPreviewImage] = useState<any>();
 
-    const handleEditorChange = ({ html, text }: any) => {
-        setContentHTML(html);
-        setContentMarkdown(text);
-    };
+    useEffect(() => {
+        if (!selectedVideo) {
+            setPreviewVideo(undefined);
+            return;
+        }
+        const objectUrl = URL.createObjectURL(selectedVideo);
+        setPreviewVideo(objectUrl);
+        return () => URL.revokeObjectURL(objectUrl);
+    }, [selectedVideo]);
+
+    useEffect(() => {
+        if (!selectedImage) {
+            setPreviewImage(undefined);
+            return;
+        }
+        const objectUrl = URL.createObjectURL(selectedImage);
+        setPreviewImage(objectUrl);
+        return () => URL.revokeObjectURL(objectUrl);
+    }, [selectedImage]);
 
     useEffect(() => {
         if (typeModal === 'edit' && dataToModal) handleFillForm(dataToModal);
     }, []);
 
-    useEffect(() => {
-        if (!selectedFile) {
-            setPreview(undefined);
-            return;
-        }
-        const objectUrl = URL.createObjectURL(selectedFile);
-        setPreview(objectUrl);
-        return () => URL.revokeObjectURL(objectUrl);
-    }, [selectedFile]);
-
-    const handleFillForm = (data: NewsType) => {
+    const handleFillForm = (data: VideoType) => {
         form.setFieldValue('name', data.name);
         form.setFieldValue('description', data.description);
-        setContentHTML(data.contentHTML);
-        setContentMarkdown(data.contentMarkdown);
-        setPreview(data.img_url);
+        setPreviewVideo(data.video_url);
+        setPreviewImage(data.img_url);
     };
 
-    const onSelectFile = (e: any) => {
+    const onSelectVideo = (e: any) => {
         if (!e.target.files || e.target.files.length === 0) {
             return;
         }
-        setSelectedFile(e.target.files[0]);
+        setSelectedVideo(e.target.files[0]);
         console.log('file:', e.target.files[0]);
     };
 
-    const uploadImage = async () => {
-        if (!selectedFile) {
-            if (typeModal === 'add') return;
-            else return preview;
+    const onSelectImage = (e: any) => {
+        if (!e.target.files || e.target.files.length === 0) {
+            return;
         }
-        const imageRef = ref(storage, `image/${selectedFile.name + v4()}`);
-        await uploadBytesResumable(imageRef, selectedFile);
+        setSelectedImage(e.target.files[0]);
+        console.log('file:', e.target.files[0]);
+    };
+
+    const uploadVideo = async () => {
+        if (!selectedVideo) {
+            console.log('jkjk', previewVideo);
+
+            if (typeModal === 'add') return;
+            else return previewVideo;
+        }
+        const imageRef = ref(storage, `video/${selectedVideo.name + v4()}`);
+        await uploadBytesResumable(imageRef, selectedVideo);
+        const res = await getDownloadURL(imageRef);
+        return res;
+    };
+
+    const uploadImage = async () => {
+        if (!selectedImage) {
+            if (typeModal === 'add') return;
+            else return previewImage;
+        }
+        const imageRef = ref(storage, `image/${selectedImage.name + v4()}`);
+        await uploadBytesResumable(imageRef, selectedImage);
         const res = await getDownloadURL(imageRef);
         return res;
     };
 
     const onFinish = async () => {
+        const videoUrl = await uploadVideo();
         const imgUrl = await uploadImage();
-        const data: NewsType = {
+        const data: VideoType = {
             name: form.getFieldValue('name'),
             description: form.getFieldValue('description'),
-            contentHTML,
-            contentMarkdown,
             img_url: imgUrl,
+            video_url: videoUrl,
             author: email,
         };
-        if (typeModal === 'add') handleAddNews(data);
+        if (typeModal === 'add') handleAddVideo(data);
         if (typeModal === 'edit' && dataToModal) {
             data._id = dataToModal._id;
-            handleEditNews(data);
+            handleEditVideo(data);
         }
     };
 
-    const handleAddNews = async (news: NewsType): Promise<any> => {
+    const handleAddVideo = async (news: VideoType): Promise<any> => {
         try {
-            const res = await newsApi.add(news);
+            const res = await videoApi.add(news);
             if (res?.data) {
                 if (res.data.errCode === 0) {
                     toast.success(res.data.errMessage);
-                    if (getAllNews) await getAllNews({ page, size });
+                    if (getAllVideo) await getAllVideo({ page, size });
                 }
                 if (res.data.errCode === 1) toast.error(res.data.errMessage);
             }
@@ -116,13 +141,13 @@ export const ModalVideo = ({
         }
     };
 
-    const handleEditNews = async (news: NewsType): Promise<any> => {
+    const handleEditVideo = async (news: VideoType): Promise<any> => {
         try {
-            const res = await newsApi.edit(news);
+            const res = await videoApi.edit(news);
             if (res?.data) {
                 if (res.data.errCode === 0) {
                     toast.success(res.data.errMessage);
-                    if (getAllNews) await getAllNews({ page, size });
+                    if (getAllVideo) await getAllVideo({ page, size });
                 }
                 if (res.data.errCode === 1) toast.error(res.data.errMessage);
             }
@@ -178,28 +203,90 @@ export const ModalVideo = ({
                     </Form.Item>
                 </Form>
                 <div className="upload">
-                    <label htmlFor="file-upload" className="custom-file-upload">
+                    <label
+                        htmlFor="file-upload-image"
+                        className="custom-file-upload"
+                    >
                         Upload
                     </label>
                     <input
                         type="file"
-                        id="file-upload"
-                        onChange={onSelectFile}
+                        id="file-upload-image"
+                        onChange={onSelectImage}
                     />
                     {typeModal === 'add' ? (
-                        selectedFile ? (
-                            <img src={preview} className="preview-img" />
+                        selectedImage ? (
+                            <img src={previewImage} className="preview-img" />
                         ) : (
                             <></>
                         )
-                    ) : selectedFile ? (
-                        <img src={preview} className="preview-img" />
+                    ) : selectedImage ? (
+                        <img src={previewImage} className="preview-img" />
                     ) : (
                         <>
                             <img
                                 src={dataToModal && dataToModal?.img_url}
                                 className="preview-img"
                             />
+                        </>
+                    )}
+                </div>
+                <div className="upload">
+                    <label
+                        htmlFor="file-upload-video"
+                        className="custom-file-upload"
+                    >
+                        Upload
+                    </label>
+                    <input
+                        type="file"
+                        id="file-upload-video"
+                        onChange={onSelectVideo}
+                    />
+                    {typeModal === 'add' ? (
+                        selectedVideo ? (
+                            <video
+                                autoPlay
+                                loop
+                                controls
+                                style={{
+                                    width: '400px',
+                                    height: '400px',
+                                    objectFit: 'cover',
+                                    marginLeft: 40,
+                                }}
+                                src={previewVideo}
+                            ></video>
+                        ) : (
+                            <></>
+                        )
+                    ) : selectedVideo ? (
+                        <video
+                            autoPlay
+                            loop
+                            controls
+                            style={{
+                                width: '400px',
+                                height: '400px',
+                                objectFit: 'cover',
+                                marginLeft: 40,
+                            }}
+                            src={previewVideo}
+                        ></video>
+                    ) : (
+                        <>
+                            <video
+                                autoPlay
+                                loop
+                                controls
+                                style={{
+                                    width: '400px',
+                                    height: '400px',
+                                    objectFit: 'cover',
+                                    marginLeft: 40,
+                                }}
+                                src={dataToModal && dataToModal?.video_url}
+                            ></video>
                         </>
                     )}
                 </div>

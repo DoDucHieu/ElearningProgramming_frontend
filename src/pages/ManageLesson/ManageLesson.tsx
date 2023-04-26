@@ -1,23 +1,28 @@
-import '../../asset/style/ManageAccount.scss';
+import { CheckOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { Button, Table } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
-import { ModalOrder } from './ModalOrder';
-import { OrderType, UserType } from '../../type/type';
-import { CONSTANT } from '../../constant/constant';
-import { PaginationComponent } from '../../component/Pagination/PaginationComponent';
-import { useSearchParams } from 'react-router-dom';
-import { SearchParams } from '../../type/common';
-import { ConfirmModal } from '../../component/ConfirmModal/ConfirmModal';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { lessonApi } from '../../api/lessonApi';
+import '../../asset/style/ManageAccount.scss';
+import { ConfirmModal } from '../../component/ConfirmModal/ConfirmModal';
+import { PaginationComponent } from '../../component/Pagination/PaginationComponent';
 import { SearchComponent } from '../../component/SearchComponent/SearchComponent';
-import { orderApi } from '../../api/OrderApi';
-import moment from 'moment';
-export const ManageOrder = (): React.ReactElement => {
-    const [data, setData] = useState<UserType[]>([]);
-    const [dataToModal, setDataToModal] = useState<UserType>({});
+import { CONSTANT } from '../../constant/constant';
+import { SearchParams } from '../../type/common';
+import { LessonType } from '../../type/type';
+import { ModalDetailLesson } from './ModalDetailLesson';
+import { ModalLesson } from './ModalLesson';
+
+export const ManageLesson = (): React.ReactElement => {
+    const params = useParams();
+    const course_id = params.courseId;
+    const [data, setData] = useState<LessonType[]>([]);
+    const [dataToModal, setDataToModal] = useState<LessonType>();
     const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
+    const [isOpenModalDetail, setIsOpenModalDetail] = useState<boolean>(false);
+    const [lessonIdDetail, setLessonIdDetail] = useState<string>();
     const [typeModal, setTypeModal] = useState<string>('create');
     const [searchParams] = useSearchParams();
     const page = searchParams.get('page') || CONSTANT.DEFAULT_PAGE;
@@ -25,35 +30,38 @@ export const ManageOrder = (): React.ReactElement => {
     const keyword = searchParams.get('keyword') || CONSTANT.DEFAULT_KEYWORD;
     const [totalRecord, setTotalRecord] = useState<number>();
 
-    const columns: ColumnsType<OrderType> = [
+    const columns: ColumnsType<LessonType> = [
         {
-            title: 'Email',
-            dataIndex: 'email',
-            fixed: true,
-            render: (text) => <span>{text}</span>,
-        },
-        {
-            fixed: true,
-            title: 'Phương thức thanh toán',
-            dataIndex: 'paymentMethod',
-            render: (text) => <span>{text && 'Thanh toán online'}</span>,
-        },
-        {
-            fixed: true,
-            title: 'Ngày đặt hàng',
-            dataIndex: 'createdAt',
-            render: (text) => (
-                <span>{moment(text).format(CONSTANT.FORMAT_DATE_HOUR)}</span>
+            title: 'Tên bài học',
+            dataIndex: 'name',
+            width: '20%',
+            render: (text, record) => (
+                <span
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => {
+                        setIsOpenModalDetail(true);
+                        setLessonIdDetail(record?._id);
+                    }}
+                >
+                    {text}
+                </span>
             ),
         },
         {
-            fixed: true,
-            title: 'Trạng thái',
-            dataIndex: 'isPurchase',
-            render: (text) => <span>{text && 'Đã thanh toán'}</span>,
+            width: '20%',
+            title: 'Mô tả',
+            dataIndex: 'description',
+            render: (text) => <span>{text}</span>,
+        },
+
+        {
+            width: '20%',
+            title: 'Loại bài học',
+            dataIndex: 'type',
+            render: (text) => <span>{text ? 'Video' : 'Bài viết'}</span>,
         },
         {
-            fixed: true,
+            width: '10%',
             title: 'Chức năng',
             render: (record) => (
                 <>
@@ -82,12 +90,7 @@ export const ManageOrder = (): React.ReactElement => {
                         }}
                     >
                         <DeleteOutlined
-                            onClick={() =>
-                                handleDeleteOrder(
-                                    record?.email,
-                                    record?.orderId,
-                                )
-                            }
+                            onClick={() => handleDeleteLesson(record?._id)}
                         />
                     </span>
                 </>
@@ -95,25 +98,18 @@ export const ManageOrder = (): React.ReactElement => {
         },
     ];
 
-    const handleCalculateSubTotal = (data: any[]) => {
-        let total: any = 0;
-        data.forEach((item) => {
-            total += item?.price * item?.quantity;
-        });
-        return total;
-    };
-
     useEffect(() => {
-        handleGetAllOrder({
+        handleGetAllLesson({
             page,
             size,
             keyword,
+            course_id,
         });
-    }, [page, size, keyword]);
+    }, [page, size, keyword, course_id]);
 
-    const handleGetAllOrder = async (params: SearchParams): Promise<any> => {
+    const handleGetAllLesson = async (params: any): Promise<any> => {
         try {
-            const res = await orderApi.getAll(params);
+            const res = await lessonApi.getAll(params);
             if (res?.data?.data) {
                 const arr = handleFormatData(res.data.data);
                 setData(arr);
@@ -125,42 +121,43 @@ export const ManageOrder = (): React.ReactElement => {
     };
 
     const handleFormatData = (data: any) => {
-        const arr: OrderType[] = data.map((item: any) => {
+        const arr: LessonType[] = data.map((item: any) => {
             return {
-                orderId: item._id,
-                email: item.email,
-                totalCost: handleCalculateSubTotal(item.listProduct),
-                receiveAddress: item.receiveAddress,
-                paymentMethod: item.paymentMethod,
-                isPurchase: item.isPurchase,
-                createdAt: item.createdAt,
+                _id: item._id,
+                course_id: item?.course_id,
+                name: item.name,
+                description: item?.description,
+                type: item?.type,
+                video_url: item.video_url,
+                contentHTML: item.contentHTML,
+                contentMarkdown: item.contentMarkdown,
             };
         });
         return arr;
     };
 
-    const handleDeleteOrder = (email: string, orderId: string) => {
+    const handleDeleteLesson = (_id: string) => {
         ConfirmModal({
             icon: <></>,
             onOk: async () => {
                 try {
                     const params = {
-                        email,
-                        orderId,
+                        _id,
                     };
-                    const res = await orderApi.delete(params);
-                    if (res && res.status === 200) {
+                    const res = await lessonApi.delete(params);
+                    if (res?.data?.errCode === 0) {
                         toast.success(res.data.errMessage);
-                        await handleGetAllOrder({ page, size });
+                        await handleGetAllLesson({ page, size, course_id });
                     }
                 } catch (error: any) {
                     console.log(error);
+
                     toast.error(error.message);
                 }
             },
             className: 'confirm__modal',
             title: 'Bạn có chắc muốn xóa không',
-            description: 'Đơn hàng sẽ bị hủy!',
+            description: 'Bài học này sẽ bị xóa vĩnh viễn',
             canceText: `Hủy bỏ`,
             okText: 'Xóa',
         });
@@ -168,6 +165,10 @@ export const ManageOrder = (): React.ReactElement => {
 
     const handleClose = () => {
         setIsOpenModal(false);
+    };
+
+    const handleCloseModalDetail = () => {
+        setIsOpenModalDetail(false);
     };
 
     return (
@@ -191,7 +192,7 @@ export const ManageOrder = (): React.ReactElement => {
                         setTypeModal('add');
                     }}
                 >
-                    Add order
+                    Thêm bài học
                 </Button>
             </div>
             <div className="manage-account-table">
@@ -209,11 +210,17 @@ export const ManageOrder = (): React.ReactElement => {
                 </div>
             </div>
             {isOpenModal && (
-                <ModalOrder
+                <ModalLesson
                     handleClose={handleClose}
-                    getAllOrder={handleGetAllOrder}
+                    getAllLesson={handleGetAllLesson}
                     typeModal={typeModal}
                     dataToModal={dataToModal}
+                />
+            )}
+            {isOpenModalDetail && (
+                <ModalDetailLesson
+                    _id={lessonIdDetail}
+                    handleClose={handleCloseModalDetail}
                 />
             )}
         </div>

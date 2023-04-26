@@ -5,15 +5,22 @@ import adidas from '../../asset/video/adidas.mp4';
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CONSTANT } from '../../constant/constant';
-import { NewsType, ProductType } from '../../type/type';
+import { CourseType, NewsType, ProductType, VideoType } from '../../type/type';
 import { SearchParams } from '../../type/common';
 import { productApi } from '../../api/productApi';
 import { NewComponent } from '../News/NewComponent';
 import { newsApi } from '../../api/newsApi';
+import { VideoComponent } from '../Video/VideoComponent';
+import { videoApi } from '../../api/videoApi';
+import { courseApi } from '../../api/courseApi';
+import { CourseComponent } from '../Course/CourseComponent';
 export const Home = (): React.ReactElement => {
     const navigate = useNavigate();
     const [listProduct, setListProduct] = useState<ProductType[]>([]);
+    const [listFreeCourse, setListFreeCourse] = useState<CourseType[]>([]);
+    const [listProCourse, setListProCourse] = useState<CourseType[]>([]);
     const [listNews, setListNews] = useState<NewsType[]>();
+    const [listVideos, setListVideos] = useState<VideoType[]>();
     const [searchParams] = useSearchParams();
     const page = searchParams.get('page') || CONSTANT.DEFAULT_PAGE;
     const size = searchParams.get('size') || CONSTANT.DEFAULT_SIZE;
@@ -30,33 +37,61 @@ export const Home = (): React.ReactElement => {
             size,
             keyword,
         });
+        handleGetAllVideo({
+            page,
+            size,
+            keyword,
+        });
+        handleGetAllFreeCourse({
+            page,
+            size,
+            keyword,
+        });
+
+        handleGetAllProCourse({
+            page,
+            size,
+            keyword,
+        });
     }, [page, size, keyword]);
 
-    const handleGetAllProduct = async (params: SearchParams): Promise<any> => {
+    const handleGetAllFreeCourse = async (
+        params: SearchParams,
+    ): Promise<any> => {
         try {
-            const res = await productApi.getAll(params);
-            if (res?.data?.listProduct) {
-                const arr = handleFormatData(res.data.listProduct);
-                setListProduct(arr);
+            const res = await courseApi.getAllFreeCourse(params);
+            if (res?.data?.data) {
+                console.log('free: ', res.data);
+                setListFreeCourse(res.data.data);
             }
         } catch (error) {
             console.log(error);
         }
     };
 
-    const handleFormatData = (data: any) => {
-        const arr: ProductType[] = data.map((item: any) => {
-            return {
-                _id: item._id,
-                productName: item.productName,
-                description: item.description,
-                categoryName: item.categoryName,
-                imgUrl: item.imgUrl,
-                price: item.price,
-                datePublish: item.datePublish,
-            };
-        });
-        return arr;
+    const handleGetAllProCourse = async (
+        params: SearchParams,
+    ): Promise<any> => {
+        try {
+            const res = await courseApi.getAllProCourse(params);
+            if (res?.data?.data) {
+                console.log('pro: ', res.data);
+                setListProCourse(res.data.data);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const handleGetAllProduct = async (params: SearchParams): Promise<any> => {
+        try {
+            const res = await productApi.getAll(params);
+            if (res?.data?.listProduct) {
+                setListProduct(res.data.listProduct);
+            }
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     const handleGetAllNews = async (params: SearchParams): Promise<any> => {
@@ -69,38 +104,36 @@ export const Home = (): React.ReactElement => {
             console.log(error);
         }
     };
+
+    const handleGetAllVideo = async (params: SearchParams): Promise<any> => {
+        try {
+            const res = await videoApi.getAll(params);
+            if (res?.data?.data) {
+                setListVideos(res.data.data);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
     return (
         <>
             <div className="home">
                 <div className="banner">
-                    <video
-                        autoPlay
-                        muted
-                        loop
-                        style={{
-                            width: '100%',
-                            height: '86vh',
-                            objectFit: 'cover',
-                        }}
-                    >
-                        <source src={adidas} type="video/mp4" />
-                    </video>
                     <div className="page-header">
                         <div className="page-header-title">
-                            Introducing Footware
+                            Introducing elearning programming
                         </div>
                         <div className="page-header-content">
-                            <h1>A SPRINGY RIDE FOR EVERY RUN</h1>
+                            <h1>COMPREHENSIVE PROGRAMMING PLATFORM</h1>
                             <span>
-                                Back in its fouth decade, the Footware 40 is
-                                springier than ever and offers runners of all
-                                kinds a perfect fit.
+                                Platform with many courses with a variety of
+                                videos and articles.
                             </span>
                             <div
                                 className="join-us"
                                 onClick={() => navigate('/product')}
                             >
-                                Shop
+                                Course
                             </div>
                         </div>
                     </div>
@@ -182,34 +215,35 @@ export const Home = (): React.ReactElement => {
                 <div className="page-header">
                     <div className="page-header-title"></div>
                     <div className="page-header-content">
-                        <h1>ALL PRODUCT WITH MANY CATEGORY HERE</h1>
+                        <h1>ALL COURSE WITH MANY PROGRAMMING HERE</h1>
                         <span>
-                            There are various products, they are the best choice
+                            There are various courses, they are the best choice
                             for you
                         </span>
                         <div
                             className="join-us"
                             onClick={() => navigate('/product')}
                         >
-                            Shop
+                            Course
                         </div>
                     </div>
                 </div>
                 <div className="category">
                     <div className="category-title">Khóa học trả phí</div>
                     <Row>
-                        {listProduct &&
-                            listProduct.map((item: ProductType) => {
+                        {listProCourse &&
+                            listProCourse.map((item: CourseType) => {
                                 return (
-                                    item?.categoryName === 'Adidas' && (
-                                        <Col span={6}>
-                                            <NewComponent
-                                                new_id={item._id}
-                                                name={item?.productName}
-                                                view={item?.price}
-                                            />
-                                        </Col>
-                                    )
+                                    <Col span={6}>
+                                        <CourseComponent
+                                            course_id={item._id}
+                                            name={item?.name}
+                                            number_registry={
+                                                item?.number_registry
+                                            }
+                                            img_url={item?.img_url}
+                                        />
+                                    </Col>
                                 );
                             })}
                     </Row>
@@ -217,39 +251,19 @@ export const Home = (): React.ReactElement => {
                 <div className="category">
                     <div className="category-title">Khóa học miễn phí</div>
                     <Row>
-                        {listProduct &&
-                            listProduct.map((item: ProductType) => {
+                        {listFreeCourse &&
+                            listFreeCourse.map((item: CourseType) => {
                                 return (
-                                    item?.categoryName === 'Nike' && (
-                                        <Col span={6}>
-                                            <Card
-                                                className="item"
-                                                hoverable
-                                                cover={
-                                                    <img
-                                                        style={{
-                                                            height: 250,
-                                                            objectFit: 'cover',
-                                                        }}
-                                                        alt="example"
-                                                        src={item?.imgUrl}
-                                                    />
-                                                }
-                                                onClick={() => {
-                                                    navigate(
-                                                        `/detail-product/${item._id}`,
-                                                    );
-                                                }}
-                                            >
-                                                <Meta
-                                                    title={item?.productName}
-                                                    description={
-                                                        item?.description
-                                                    }
-                                                />
-                                            </Card>
-                                        </Col>
-                                    )
+                                    <Col span={6}>
+                                        <CourseComponent
+                                            course_id={item._id}
+                                            name={item?.name}
+                                            number_registry={
+                                                item?.number_registry
+                                            }
+                                            img_url={item?.img_url}
+                                        />
+                                    </Col>
                                 );
                             })}
                     </Row>
@@ -257,55 +271,33 @@ export const Home = (): React.ReactElement => {
                 <div className="page-header">
                     <div className="page-header-title"></div>
                     <div className="page-header-content">
-                        <h1>AIR IN THE FAMILY OF ALL PEOPLE</h1>
+                        <h1>SOME POST AND VIDEO TRENDING</h1>
                         <span>
                             Highlight the unique vibe of each member of the
                             squad in the Air Max 90.
                         </span>
                         <div
                             className="join-us"
-                            onClick={() => navigate('/product')}
+                            onClick={() => navigate('/list-video')}
                         >
-                            Shop
+                            Video
                         </div>
                     </div>
                 </div>
                 <div className="category">
                     <div className="category-title">Video nổi bật</div>
                     <Row>
-                        {listProduct &&
-                            listProduct.map((item: ProductType) => {
+                        {listVideos &&
+                            listVideos.map((item: VideoType) => {
                                 return (
-                                    item?.categoryName === 'Nike' && (
-                                        <Col span={6}>
-                                            <Card
-                                                className="item"
-                                                hoverable
-                                                cover={
-                                                    <img
-                                                        style={{
-                                                            height: 250,
-                                                            objectFit: 'cover',
-                                                        }}
-                                                        alt="example"
-                                                        src={item?.imgUrl}
-                                                    />
-                                                }
-                                                onClick={() => {
-                                                    navigate(
-                                                        `/detail-product/${item._id}`,
-                                                    );
-                                                }}
-                                            >
-                                                <Meta
-                                                    title={item?.productName}
-                                                    description={
-                                                        item?.description
-                                                    }
-                                                />
-                                            </Card>
-                                        </Col>
-                                    )
+                                    <Col span={6}>
+                                        <VideoComponent
+                                            video_id={item._id}
+                                            name={item?.name}
+                                            view={item?.view}
+                                            img_url={item?.img_url}
+                                        />
+                                    </Col>
                                 );
                             })}
                     </Row>
@@ -322,6 +314,7 @@ export const Home = (): React.ReactElement => {
                                             new_id={item._id}
                                             name={item?.name}
                                             view={item?.view}
+                                            img_url={item?.img_url}
                                         />
                                     </Col>
                                 );

@@ -1,25 +1,25 @@
-import { Button, Col, Form, Input, Radio, Row, Space } from 'antd';
+import { CloseOutlined } from '@ant-design/icons';
+import { Button, Col, Form, Radio, Row, Space } from 'antd';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import '../../asset/style/Cart.scss';
+import { toast } from 'react-toastify';
+import { orderApi } from '../../api/OrderApi';
+import { paymentApi } from '../../api/PaymentApi';
+import { cartApi } from '../../api/cartApi';
 import stripe from '../../asset/image/stripe.png';
-import { CloseOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
+import '../../asset/style/Cart.scss';
 import { cartAction } from '../../store/action/cartAction';
 import { AppDispatch, RootState } from '../../store/store';
 import { CartType, OrderType } from '../../type/type';
-import { paymentApi } from '../../api/PaymentApi';
-import { orderApi } from '../../api/OrderApi';
-import { cartApi } from '../../api/cartApi';
-import { toast } from 'react-toastify';
 
 export const Cart = () => {
     const navigate = useNavigate();
     const dispatch: AppDispatch = useDispatch();
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const email = user.email;
-    const listProduct = useSelector(
-        (state: RootState) => state.cartReducer.arrProduct,
+    const listCourse = useSelector(
+        (state: RootState) => state.cartReducer.arrCourse,
     );
     const [subTotal, setSubTotal] = useState<number>();
     const [isOnline, setIsOnline] = useState(navigator.onLine);
@@ -48,8 +48,8 @@ export const Cart = () => {
     }, []);
 
     useEffect(() => {
-        handleCalculateSubTotal(listProduct);
-    }, [listProduct]);
+        handleCalculateSubTotal(listCourse);
+    }, [listCourse]);
 
     const handleGetAllCart = async (email: any) => {
         try {
@@ -63,7 +63,7 @@ export const Cart = () => {
         try {
             const params = {
                 email: email,
-                productId: data.productId,
+                course_id: data.course_id,
             };
             await dispatch(cartAction.removeFromCart(params));
         } catch (e) {
@@ -71,26 +71,10 @@ export const Cart = () => {
         }
     };
 
-    const handleAddToCart = async (data: CartType, type: boolean) => {
-        try {
-            const newData: CartType = {
-                email: email,
-                productId: data?.productId,
-                productName: data?.productName,
-                imgUrl: data?.imgUrl,
-                price: data?.price,
-                quantity: type ? 1 : -1,
-            };
-            await dispatch(cartAction.addToCart(newData));
-        } catch (e) {
-            console.log('error: ', e);
-        }
-    };
-
     const handleCalculateSubTotal = (data: any[]) => {
         let total: any = 0;
         data.forEach((item) => {
-            total += item?.price * item?.quantity;
+            total += item?.price;
         });
         setSubTotal(total);
     };
@@ -98,19 +82,18 @@ export const Cart = () => {
     const handleCheckoutStripe = async () => {
         const orderInfor: OrderType = {
             email: email,
-            totalCost: subTotal,
-            listProduct,
-            receiveAddress: form.getFieldValue('receiveAddress'),
-            paymentMethod: form.getFieldValue('paymentMethod'),
+            total_cost: subTotal,
+            list_course: listCourse,
+            payment_method: form.getFieldValue('paymentMethod'),
         };
         try {
             const resAddOrder = await orderApi.add(orderInfor);
             if (resAddOrder)
                 if (
-                    orderInfor.paymentMethod &&
+                    orderInfor.payment_method &&
                     resAddOrder?.data?.errCode === 0
                 ) {
-                    orderInfor.orderId = resAddOrder.data?.data?._id;
+                    orderInfor.order_id = resAddOrder.data?.data?._id;
                     const res = await paymentApi.checkout(orderInfor);
                     if (res?.data?.data?.url) {
                         window.location.replace(res.data.data.url);
@@ -137,66 +120,32 @@ export const Cart = () => {
         }
     };
 
+    console.log('list course: ', listCourse);
+
     return (
         <div className="cart">
             <Row>
                 <Col span={18}>
                     <div className="cart-list">
-                        {listProduct && listProduct.length > 0 ? (
-                            listProduct.map((item) => {
+                        {listCourse && listCourse.length > 0 ? (
+                            listCourse.map((item: CartType) => {
                                 return (
                                     <div className="cart-item">
                                         <div className="cart-left">
                                             <img
-                                                src={item?.imgUrl}
+                                                src={item?.img_url}
                                                 alt=""
                                                 className="productImg"
                                                 onClick={() => {
                                                     navigate(
-                                                        `/detail-product/${item?.productId}`,
+                                                        `/detail-course/${item?.course_id}`,
                                                     );
                                                 }}
                                             />
                                         </div>
                                         <div className="cart-mid">
-                                            <span>{item?.productName}</span>
+                                            <span>{item?.name}</span>
                                             <span>{item?.price} $</span>
-                                            <div className="quantity">
-                                                <div className="quantity-minus">
-                                                    <MinusOutlined
-                                                        style={{
-                                                            cursor: 'pointer',
-                                                        }}
-                                                        onClick={() => {
-                                                            item?.quantity >
-                                                                1 &&
-                                                                handleAddToCart(
-                                                                    item,
-                                                                    false,
-                                                                );
-                                                        }}
-                                                    />
-                                                </div>
-                                                <div className="quantity-number">
-                                                    {item?.quantity}
-                                                </div>
-                                                <div className="quantity-plus">
-                                                    <PlusOutlined
-                                                        style={{
-                                                            cursor: 'pointer',
-                                                        }}
-                                                        onClick={() =>
-                                                            handleAddToCart(
-                                                                item,
-                                                                true,
-                                                            )
-                                                        }
-                                                    />
-                                                </div>
-                                            </div>
-                                            <span>
-                                                {item?.price * item?.quantity} $
-                                            </span>
                                         </div>
                                         <div className="cart-right">
                                             <CloseOutlined
@@ -214,7 +163,7 @@ export const Cart = () => {
                             })
                         ) : (
                             <h1 style={{ color: 'red' }}>
-                                Không có sản phẩm nào trong giỏ hàng
+                                Không có khóa học nào trong giỏ hàng
                             </h1>
                         )}
                     </div>
@@ -236,22 +185,6 @@ export const Cart = () => {
                                 onFinish={handleCheckoutStripe}
                             >
                                 <Form.Item
-                                    label="Địa chỉ nhận hàng"
-                                    name="receiveAddress"
-                                    labelAlign="left"
-                                    rules={[
-                                        {
-                                            required: true,
-
-                                            message:
-                                                'Vui lòng nhập địa chỉ nhận hàng!',
-                                        },
-                                    ]}
-                                >
-                                    <Input />
-                                </Form.Item>
-
-                                <Form.Item
                                     label="Phương thức thanh toán"
                                     name="paymentMethod"
                                     labelAlign="left"
@@ -265,9 +198,6 @@ export const Cart = () => {
                                 >
                                     <Radio.Group>
                                         <Space direction="vertical">
-                                            <Radio value={false}>
-                                                Thanh toán sau khi nhận hàng
-                                            </Radio>
                                             <Radio value={true}>
                                                 <img
                                                     src={stripe}

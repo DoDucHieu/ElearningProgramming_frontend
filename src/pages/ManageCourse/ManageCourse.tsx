@@ -2,42 +2,40 @@ import { CheckOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { Button, Table } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { newsApi } from '../../api/newsApi';
+import { courseApi } from '../../api/courseApi';
 import '../../asset/style/ManageAccount.scss';
 import { ConfirmModal } from '../../component/ConfirmModal/ConfirmModal';
 import { PaginationComponent } from '../../component/Pagination/PaginationComponent';
 import { SearchComponent } from '../../component/SearchComponent/SearchComponent';
 import { CONSTANT } from '../../constant/constant';
 import { SearchParams } from '../../type/common';
-import { NewsType } from '../../type/type';
-import { ModalDetailVideo } from './ModalDetailVideo';
-import { ModalVideo } from './ModalVideo';
-export const ManageVideo = (): React.ReactElement => {
-    const [data, setData] = useState<NewsType[]>([]);
-    const [dataToModal, setDataToModal] = useState<NewsType>({});
+import { CourseType } from '../../type/type';
+import { ModalCourse } from './ModalCourse';
+export const ManageCourse = (): React.ReactElement => {
+    const [data, setData] = useState<CourseType[]>([]);
+    const [dataToModal, setDataToModal] = useState<CourseType>({});
     const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
-    const [isOpenModalDetail, setIsOpenModalDetail] = useState<boolean>(false);
-    const [newIdDetail, setNewIdDetail] = useState<string>();
     const [typeModal, setTypeModal] = useState<string>('create');
     const [searchParams] = useSearchParams();
     const page = searchParams.get('page') || CONSTANT.DEFAULT_PAGE;
     const size = searchParams.get('size') || CONSTANT.DEFAULT_SIZE;
     const keyword = searchParams.get('keyword') || CONSTANT.DEFAULT_KEYWORD;
     const [totalRecord, setTotalRecord] = useState<number>();
+    const navigate = useNavigate();
 
-    const columns: ColumnsType<NewsType> = [
+    const columns: ColumnsType<CourseType> = [
         {
-            title: 'Tên video',
+            title: 'Tên khóa học',
             dataIndex: 'name',
             width: '20%',
             render: (text, record) => (
                 <span
                     style={{ cursor: 'pointer' }}
                     onClick={() => {
-                        setIsOpenModalDetail(true);
-                        setNewIdDetail(record?._id);
+                        console.log('course_id: ', record._id);
+                        navigate(`/manage-lesson/${record._id}`);
                     }}
                 >
                     {text}
@@ -64,35 +62,16 @@ export const ManageVideo = (): React.ReactElement => {
 
         {
             width: '20%',
-            title: 'Tác giả',
-            dataIndex: 'author',
-            render: (text) => <span>{text}</span>,
+            title: 'Đơn giá',
+            dataIndex: 'price',
+            render: (text) => <span>{text}$</span>,
         },
-        {
-            width: '10%',
-            title: 'Phê duyệt',
-            dataIndex: 'is_approved',
-            render: (text) => <span>{text ? 'Đã duyệt' : 'Chưa duyệt'}</span>,
-        },
+
         {
             width: '10%',
             title: 'Chức năng',
             render: (record) => (
                 <>
-                    <span
-                        style={{
-                            marginLeft: 8,
-                            cursor: 'pointer',
-                            color: 'green',
-                            fontSize: 16,
-                        }}
-                    >
-                        <CheckOutlined
-                            onClick={() => {
-                                handleApproveNews(record?._id);
-                            }}
-                        />
-                    </span>
                     <span
                         style={{
                             marginLeft: 8,
@@ -118,7 +97,7 @@ export const ManageVideo = (): React.ReactElement => {
                         }}
                     >
                         <DeleteOutlined
-                            onClick={() => handleDeleteNews(record?._id)}
+                            onClick={() => handleDeleteCourse(record?._id)}
                         />
                     </span>
                 </>
@@ -127,16 +106,16 @@ export const ManageVideo = (): React.ReactElement => {
     ];
 
     useEffect(() => {
-        handleGetAllNews({
+        handleGetAllCourse({
             page,
             size,
             keyword,
         });
     }, [page, size, keyword]);
 
-    const handleGetAllNews = async (params: SearchParams): Promise<any> => {
+    const handleGetAllCourse = async (params: SearchParams): Promise<any> => {
         try {
-            const res = await newsApi.getAll(params);
+            const res = await courseApi.getAll(params);
             if (res?.data?.data) {
                 const arr = handleFormatData(res.data.data);
                 setData(arr);
@@ -148,22 +127,19 @@ export const ManageVideo = (): React.ReactElement => {
     };
 
     const handleFormatData = (data: any) => {
-        const arr: NewsType[] = data.map((item: any) => {
+        const arr: CourseType[] = data.map((item: any) => {
             return {
                 _id: item._id,
                 name: item.name,
                 description: item.description,
-                contentHTML: item.contentHTML,
-                contentMarkdown: item.contentMarkdown,
                 img_url: item.img_url,
-                author: item.author,
-                is_approved: item.is_approved,
+                price: item.price,
             };
         });
         return arr;
     };
 
-    const handleDeleteNews = (_id: string) => {
+    const handleDeleteCourse = (_id: string) => {
         ConfirmModal({
             icon: <></>,
             onOk: async () => {
@@ -171,10 +147,10 @@ export const ManageVideo = (): React.ReactElement => {
                     const params = {
                         _id,
                     };
-                    const res = await newsApi.delete(params);
+                    const res = await courseApi.delete(params);
                     if (res?.data?.errCode === 0) {
                         toast.success(res.data.errMessage);
-                        await handleGetAllNews({ page, size });
+                        await handleGetAllCourse({ page, size });
                     }
                 } catch (error: any) {
                     console.log(error);
@@ -190,42 +166,9 @@ export const ManageVideo = (): React.ReactElement => {
         });
     };
 
-    const handleApproveNews = (_id: string) => {
-        ConfirmModal({
-            icon: <></>,
-            onOk: async () => {
-                try {
-                    const data = {
-                        _id,
-                    };
-                    const res = await newsApi.approve(data);
-                    if (res?.data?.errCode === 0) {
-                        toast.success(res.data.errMessage);
-                        await handleGetAllNews({ page, size });
-                    }
-                } catch (error: any) {
-                    console.log(error);
-
-                    toast.error(error.message);
-                }
-            },
-            className: 'confirm__modal',
-            okType: 'primary',
-            title: 'Phê duyệt bài đăng này?',
-            description: 'Bài đăng sẽ được hiển thị cho mọi người xem',
-            canceText: `Hủy bỏ`,
-            okText: 'Phê duyệt',
-        });
-    };
-
     const handleClose = () => {
         setIsOpenModal(false);
     };
-
-    const handleCloseModalDetail = () => {
-        setIsOpenModalDetail(false);
-    };
-
     return (
         <div className="manage-account">
             <SearchComponent
@@ -247,7 +190,7 @@ export const ManageVideo = (): React.ReactElement => {
                         setTypeModal('add');
                     }}
                 >
-                    Thêm video
+                    Thêm khóa học
                 </Button>
             </div>
             <div className="manage-account-table">
@@ -265,17 +208,11 @@ export const ManageVideo = (): React.ReactElement => {
                 </div>
             </div>
             {isOpenModal && (
-                <ModalVideo
+                <ModalCourse
                     handleClose={handleClose}
-                    getAllNews={handleGetAllNews}
+                    getAllCourse={handleGetAllCourse}
                     typeModal={typeModal}
                     dataToModal={dataToModal}
-                />
-            )}
-            {isOpenModalDetail && (
-                <ModalDetailVideo
-                    _id={newIdDetail}
-                    handleClose={handleCloseModalDetail}
                 />
             )}
         </div>

@@ -7,6 +7,7 @@ import {
     ShoppingCartOutlined,
     SnippetsOutlined,
     UserOutlined,
+    PlayCircleOutlined,
 } from '@ant-design/icons';
 import { Layout, Menu, theme } from 'antd';
 import { useSelector } from 'react-redux';
@@ -66,6 +67,17 @@ const LayoutWrapper = () => {
         },
 
         {
+            key: 3,
+            label: (
+                <div>
+                    <ShopOutlined />
+                    <span>Khóa học</span>
+                </div>
+            ),
+            url: '/list-course',
+        },
+
+        {
             key: 4,
             label: (
                 <div>
@@ -75,8 +87,30 @@ const LayoutWrapper = () => {
             ),
             url: '/cart',
         },
+
         {
             key: 5,
+            label: (
+                <div>
+                    <SnippetsOutlined />
+                    <span>Bài viết</span>
+                </div>
+            ),
+            url: '/list-new',
+        },
+
+        {
+            key: 6,
+            label: (
+                <div>
+                    <PlayCircleOutlined />
+                    <span>Video</span>
+                </div>
+            ),
+            url: '/list-video',
+        },
+        {
+            key: 7,
             label: (
                 <div>
                     <ContactsOutlined />
@@ -85,19 +119,9 @@ const LayoutWrapper = () => {
             ),
             url: '/page',
         },
-        {
-            key: 6,
-            label: (
-                <div>
-                    <SnippetsOutlined />
-                    <span>Tin tức</span>
-                </div>
-            ),
-            url: '/list-new',
-        },
 
         {
-            key: 7,
+            key: 8,
             label: (
                 <div>
                     <PhoneOutlined />
@@ -107,7 +131,7 @@ const LayoutWrapper = () => {
             url: '/contact',
         },
         {
-            key: 8,
+            key: 9,
             label: user.accessToken && (
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                     <img
@@ -136,7 +160,7 @@ const LayoutWrapper = () => {
             ],
         },
         {
-            key: 9,
+            key: 10,
             label: (
                 <div>
                     <LogoutOutlined />
@@ -150,7 +174,7 @@ const LayoutWrapper = () => {
     const handleNavigateMenu = (key: number) => {
         menu.forEach(async (item) => {
             if (key == item.key) {
-                if (item.key == 9) {
+                if (item.key == 10) {
                     if (userAccessToken) {
                         try {
                             const res = await userApi.signOut({
@@ -205,7 +229,7 @@ const LayoutWrapper = () => {
                                                             : '',
                                                 )}
                                                 items={menu.map((item) =>
-                                                    item.key < 8 ? item : null,
+                                                    item.key < 9 ? item : null,
                                                 )}
                                                 onClick={(value: any) =>
                                                     handleNavigateMenu(
@@ -219,7 +243,7 @@ const LayoutWrapper = () => {
                                                 theme="light"
                                                 mode="horizontal"
                                                 items={menu.map((item) =>
-                                                    item.key >= 8 ? item : null,
+                                                    item.key >= 9 ? item : null,
                                                 )}
                                                 onClick={(value: any) =>
                                                     handleNavigateMenu(

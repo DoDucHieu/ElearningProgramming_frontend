@@ -3,7 +3,6 @@ import {
     FundOutlined,
     UserOutlined,
     LogoutOutlined,
-    ProfileOutlined,
     WalletOutlined,
     PlayCircleOutlined,
 } from '@ant-design/icons';
@@ -27,8 +26,7 @@ function getItem(label: string, key: string, icon?: any, children?: any) {
 }
 const items: any = [
     getItem('Quản lý tài khoản', '1', <UserOutlined />),
-    getItem('Quản lý sản phẩm', '2', <WalletOutlined />),
-    getItem('Quản lý danh mục sản phẩm', '3', <ProfileOutlined />),
+    getItem('Quản lý khóa học', '2', <WalletOutlined />),
     getItem('Quản lý đơn hàng', '4', <PayCircleOutlined />),
     getItem('Quản lý bài đăng', '5', <FundOutlined />),
     getItem('Quản lý video', '6', <PlayCircleOutlined />),
@@ -48,13 +46,8 @@ const arrTabs: ArrTabsType[] = [
     },
     {
         key: 2,
-        tabName: 'Quản lý sản phẩm',
-        url: '/manage-product',
-    },
-    {
-        key: 3,
-        tabName: 'Quản lý danh mục sản phẩm',
-        url: '/manage-category',
+        tabName: 'Quản lý khóa học',
+        url: '/manage-course',
     },
     {
         key: 4,

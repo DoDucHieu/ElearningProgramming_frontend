@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
-import { NewsType } from '../../type/type';
-import { newsApi } from '../../api/newsApi';
 import { Modal } from 'antd';
+import { useEffect, useState } from 'react';
+import { videoApi } from '../../api/videoApi';
+import '../../asset/style/ModalDetailVideo.scss';
+import { VideoType } from '../../type/type';
 
 export type Props = {
     _id?: string;
@@ -11,7 +12,7 @@ export const ModalDetailVideo = ({
     _id,
     handleClose,
 }: Props): React.ReactElement => {
-    const [dataView, setDataView] = useState<NewsType>();
+    const [dataView, setDataView] = useState<VideoType>();
     useEffect(() => {
         _id && handleGetDetailNews(_id);
     }, [_id]);
@@ -21,7 +22,7 @@ export const ModalDetailVideo = ({
             const params = {
                 _id: _id,
             };
-            const res = await newsApi.getDetail(params);
+            const res = await videoApi.getDetail(params);
             if (res?.data?.data) {
                 setDataView(res.data.data);
             }
@@ -32,31 +33,30 @@ export const ModalDetailVideo = ({
     return (
         <>
             <Modal
-                title={'Chi tiết bài đăng'}
+                className="modal-detail-video"
+                title={<span className="video-name">{dataView?.name}</span>}
                 open={true}
                 onOk={handleClose}
                 onCancel={handleClose}
                 footer={null}
-                width={1200}
+                width={1000}
             >
-                <div className="news">
-                    <div className="news-left" style={{ width: '100%' }}>
-                        <h1 className="news-name">{dataView?.name}</h1>
-                        <div className="author">
-                            <div className="author-avatar"></div>
-                            <span>{dataView?.author}</span>
-                        </div>
-                        <div className="view-news">
-                            <div
-                                className="view-news-content"
-                                dangerouslySetInnerHTML={
-                                    dataView?.contentHTML
-                                        ? { __html: dataView.contentHTML }
-                                        : undefined
-                                }
-                            ></div>
-                        </div>
-                    </div>
+                <div className="video-author">
+                    <div className="author-avatar"></div>
+                    <span>{dataView?.author}</span>
+                </div>
+                <div className="video-content">
+                    <video
+                        autoPlay
+                        loop
+                        controls
+                        style={{
+                            width: '700px',
+                            height: '400px',
+                            objectFit: 'cover',
+                        }}
+                        src={dataView?.video_url}
+                    ></video>
                 </div>
             </Modal>
         </>

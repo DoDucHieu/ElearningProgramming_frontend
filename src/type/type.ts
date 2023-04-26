@@ -1,10 +1,10 @@
 export type CartType = {
     email?: string;
-    productId?: string;
-    quantity?: number;
+    course_id?: string;
     price?: number;
-    imgUrl?: string;
-    productName?: string;
+    img_url?: string;
+    name?: string;
+    description?: string;
 };
 
 export type UserType = {
@@ -33,21 +33,14 @@ export type ProductType = {
     datePublish?: string;
 };
 
-export type CategoryType = {
-    categoryId?: string;
-    categoryName?: string;
-};
-
 export type OrderType = {
-    orderId?: string;
+    order_id?: string;
     email?: string;
-    listProduct?: ProductType[];
-    totalCost?: number;
-    shipFee?: number;
-    paymentMethod?: string;
-    receiveAddress?: string;
-    isPurchase?: boolean;
-    createdAt?: string;
+    list_course?: CourseType[];
+    total_cost?: number;
+    payment_method?: string;
+    is_purchase?: boolean;
+    created_at?: string;
 };
 
 export type NewsType = {
@@ -60,6 +53,43 @@ export type NewsType = {
     img_url?: string;
     is_approved?: string;
     view?: number;
+};
+
+export type VideoType = {
+    _id?: string;
+    name?: string;
+    description?: string;
+    author?: string;
+    img_url?: string;
+    video_url?: string;
+    is_approved?: string;
+    view?: number;
+};
+
+export type LessonType = {
+    _id?: string;
+    course_id?: string;
+    name: string;
+    description?: string;
+    type: boolean;
+    video_url?: string;
+    contentHTML?: string;
+    contentMarkdown?: string;
+};
+
+export type CourseType = {
+    _id?: string;
+    name?: string;
+    description?: string;
+    img_url?: string;
+    price?: number;
+    number_registry?: number;
+};
+
+export type MyCourseType = {
+    _id?: string;
+    email?: string;
+    course_id?: string;
 };
 
 export type CommentType = {
