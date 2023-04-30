@@ -55,19 +55,9 @@ const LayoutWrapper = () => {
             ),
             url: '/',
         },
-        {
-            key: 2,
-            label: (
-                <div>
-                    <ShopOutlined />
-                    <span>Sản phẩm</span>
-                </div>
-            ),
-            url: '/product',
-        },
 
         {
-            key: 3,
+            key: 2,
             label: (
                 <div>
                     <ShopOutlined />
@@ -76,7 +66,16 @@ const LayoutWrapper = () => {
             ),
             url: '/list-course',
         },
-
+        {
+            key: 3,
+            label: (
+                <div>
+                    <ShopOutlined />
+                    <span>Khóa học của tôi</span>
+                </div>
+            ),
+            url: '/list-my-course',
+        },
         {
             key: 4,
             label: (
@@ -114,10 +113,10 @@ const LayoutWrapper = () => {
             label: (
                 <div>
                     <ContactsOutlined />
-                    <span>Về chúng tôi</span>
+                    <span>Trò chuyện</span>
                 </div>
             ),
-            url: '/page',
+            url: '/chat',
         },
 
         {

@@ -1,44 +1,81 @@
-import '../../asset/style/FilterComponent.scss';
 import { Checkbox } from 'antd';
-import type { CheckboxValueType } from 'antd/es/checkbox/Group';
-import { SearchParams } from '../../type/common';
-import { useState, useEffect, useRef } from 'react';
-import { CONSTANT } from '../../constant/constant';
+import { useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import '../../asset/style/FilterCourseComponent.scss';
+import { CONSTANT } from '../../constant/constant';
 
 export const FilterCourseComponent = (): React.ReactElement => {
-    const [optionsCategory, setOptionsCategory] = useState<any>();
     const [searchParams, setSearchParams] = useSearchParams();
     const [isCheckProCourse, setIsCheckProCourse] = useState<boolean>(false);
     const page = searchParams.get('page') || CONSTANT.DEFAULT_PAGE;
     const size = searchParams.get('size') || CONSTANT.DEFAULT_SIZE;
     const keyword = searchParams.get('keyword') || CONSTANT.DEFAULT_KEYWORD;
 
-    const [optionsPrice, setOptionsPrice] = useState<any>([
-        { key: 0, minPrice: 0, maxPrice: 50, isChecked: false },
-        { key: 1, minPrice: 50, maxPrice: 100, isChecked: false },
-        { key: 2, minPrice: 100, maxPrice: 200, isChecked: false },
-        { key: 3, minPrice: 200, maxPrice: 1000, isChecked: false },
+    const [optionCourseType, setOptionCourseType] = useState<any>([
+        { key: 0, minPrice: undefined, maxPrice: 0, isChecked: false }, // free
+        { key: 1, minPrice: 1, maxPrice: undefined, isChecked: false }, //pro
     ]);
-    useEffect(() => {
-        setOptionsCategory([
-            {
-                label: 'Miễn phí',
-                value: false,
-            },
-            {
-                label: 'Trả phí',
-                value: true,
-            },
-        ]);
-    }, []);
+
+    const [optionsPrice, setOptionsPrice] = useState<any>([
+        { key: 0, minPrice: 1, maxPrice: 50, isChecked: false },
+        { key: 1, minPrice: 51, maxPrice: 100, isChecked: false },
+        { key: 2, minPrice: 101, maxPrice: 200, isChecked: false },
+        { key: 3, minPrice: 201, maxPrice: 1000, isChecked: false },
+    ]);
 
     const timeOut: any = useRef();
+    const handleCheckBoxTypeCourse = (item: any) => {
+        let temp = false;
+        if (timeOut.current) clearTimeout(timeOut.current);
+        const arr: any = optionCourseType.map((option: any) => {
+            if (item.key === option.key) {
+                if (item.key === 1 && !item.isChecked)
+                    setIsCheckProCourse(true);
+                else {
+                    setIsCheckProCourse(false);
+                    const arr = optionsPrice.map((item: any) => {
+                        return {
+                            ...item,
+                            isChecked: false,
+                        };
+                    });
+                    setOptionsPrice(arr);
+                    searchParams.set('filter', '');
+                    setSearchParams(searchParams);
+                }
+                if (!item.isChecked) {
+                    searchParams.set('page', CONSTANT.DEFAULT_PAGE);
+                    setSearchParams(searchParams);
+                }
+                temp = !item.isChecked;
+                return {
+                    ...option,
+                    isChecked: !item.isChecked,
+                };
+            } else {
+                return { ...option, isChecked: false };
+            }
+        });
+        setOptionCourseType([...arr]);
+        timeOut.current = setTimeout(() => {
+            const filter: any = {
+                minPrice: item.minPrice,
+                maxPrice: item.maxPrice,
+            };
+            searchParams.set('filter', temp ? JSON.stringify(filter) : '');
+            setSearchParams(searchParams);
+        }, 1000);
+    };
+
     const handleCheckBoxPrice = (item: any) => {
         let temp = false;
         if (timeOut.current) clearTimeout(timeOut.current);
         const arr: any = optionsPrice.map((option: any) => {
             if (item.key === option.key) {
+                if (!item.isChecked) {
+                    searchParams.set('page', CONSTANT.DEFAULT_PAGE);
+                    setSearchParams(searchParams);
+                }
                 temp = !item.isChecked;
                 return {
                     ...option,
@@ -48,36 +85,38 @@ export const FilterCourseComponent = (): React.ReactElement => {
         });
         setOptionsPrice([...arr]);
         timeOut.current = setTimeout(() => {
-            const sort: any = {
+            const filter: any = {
                 minPrice: item.minPrice,
                 maxPrice: item.maxPrice,
             };
-            searchParams.set('sort', temp ? JSON.stringify(sort) : '');
+            searchParams.set('filter', temp ? JSON.stringify(filter) : '');
             setSearchParams(searchParams);
         }, 1000);
-    };
-
-    const onChangeCheckBoxCategory = (checkedValues: CheckboxValueType[]) => {
-        if (timeOut.current) clearTimeout(timeOut.current);
-        timeOut.current = setTimeout(() => {
-            searchParams.set('filter', checkedValues.toString());
-            setSearchParams(searchParams);
-        }, 1000);
-        checkedValues.includes(true)
-            ? setIsCheckProCourse(true)
-            : setIsCheckProCourse(false);
-        console.log('checked = ', checkedValues);
     };
 
     return (
         <div className="filter-component">
-            <div className="filter-category">
-                <span className="category">Loại khóa học</span>
-                <Checkbox.Group
-                    style={{ display: 'flex', flexDirection: 'column' }}
-                    options={optionsCategory}
-                    onChange={onChangeCheckBoxCategory}
-                />
+            <div className="filter-course-type">
+                <span className="type">Loại khóa học</span>
+                {optionCourseType &&
+                    optionCourseType.map((item: any) => {
+                        return (
+                            <Checkbox
+                                key={item?.key}
+                                style={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                }}
+                                value={JSON.stringify(item)}
+                                onClick={() => handleCheckBoxTypeCourse(item)}
+                                checked={item?.isChecked}
+                            >
+                                {!item?.minPrice && item?.maxPrice === 0
+                                    ? 'Miễn phí'
+                                    : 'Trả phí'}
+                            </Checkbox>
+                        );
+                    })}
             </div>
             {isCheckProCourse && (
                 <div className="filter-price">

@@ -1,0 +1,17 @@
+.video-component{
+    .video-infor{
+        width: 100%;
+        display: flex;
+        .video-name{
+            width: 80%;
+            overflow-x: hidden;
+        }
+        .video-view{
+            width: 20%;
+            text-align: right;
+            .view-number{
+                margin-left: 4px;
+            }
+        }
+    }
+}

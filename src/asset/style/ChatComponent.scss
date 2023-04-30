@@ -1,0 +1,11 @@
+.chat-component{
+    width: 100%;
+    display: flex;
+    .chat-left{
+        width: 30%;
+        padding-right: 8px;
+    }
+    .chat-right{
+        width: 70%;
+    }
+}

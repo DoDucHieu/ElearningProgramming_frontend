@@ -4,7 +4,7 @@ import type { ColumnsType } from 'antd/es/table';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 import { ModalOrder } from './ModalOrder';
-import { OrderType, UserType } from '../../type/type';
+import { CourseType, OrderType, UserType } from '../../type/type';
 import { CONSTANT } from '../../constant/constant';
 import { PaginationComponent } from '../../component/Pagination/PaginationComponent';
 import { useSearchParams } from 'react-router-dom';
@@ -15,7 +15,7 @@ import { SearchComponent } from '../../component/SearchComponent/SearchComponent
 import { orderApi } from '../../api/OrderApi';
 import moment from 'moment';
 export const ManageOrder = (): React.ReactElement => {
-    const [data, setData] = useState<UserType[]>([]);
+    const [data, setData] = useState<OrderType[]>([]);
     const [dataToModal, setDataToModal] = useState<UserType>({});
     const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
     const [typeModal, setTypeModal] = useState<string>('create');
@@ -33,9 +33,17 @@ export const ManageOrder = (): React.ReactElement => {
             render: (text) => <span>{text}</span>,
         },
         {
+            title: 'Danh sách khóa học',
+            dataIndex: 'list_course',
+            fixed: true,
+            render: (text) => (
+                <span>{handleFormatListCourse(text).toString()}</span>
+            ),
+        },
+        {
             fixed: true,
             title: 'Phương thức thanh toán',
-            dataIndex: 'paymentMethod',
+            dataIndex: 'payment_method',
             render: (text) => <span>{text && 'Thanh toán online'}</span>,
         },
         {
@@ -49,7 +57,7 @@ export const ManageOrder = (): React.ReactElement => {
         {
             fixed: true,
             title: 'Trạng thái',
-            dataIndex: 'isPurchase',
+            dataIndex: 'is_purchase',
             render: (text) => <span>{text && 'Đã thanh toán'}</span>,
         },
         {
@@ -57,22 +65,6 @@ export const ManageOrder = (): React.ReactElement => {
             title: 'Chức năng',
             render: (record) => (
                 <>
-                    <span
-                        style={{
-                            marginLeft: 8,
-                            cursor: 'pointer',
-                            color: 'blue',
-                            fontSize: 16,
-                        }}
-                    >
-                        <EditOutlined
-                            onClick={() => {
-                                setIsOpenModal(true);
-                                setTypeModal('edit');
-                                setDataToModal(record);
-                            }}
-                        />
-                    </span>
                     <span
                         style={{
                             marginLeft: 8,
@@ -85,7 +77,7 @@ export const ManageOrder = (): React.ReactElement => {
                             onClick={() =>
                                 handleDeleteOrder(
                                     record?.email,
-                                    record?.orderId,
+                                    record?.order_id,
                                 )
                             }
                         />
@@ -94,14 +86,6 @@ export const ManageOrder = (): React.ReactElement => {
             ),
         },
     ];
-
-    const handleCalculateSubTotal = (data: any[]) => {
-        let total: any = 0;
-        data.forEach((item) => {
-            total += item?.price * item?.quantity;
-        });
-        return total;
-    };
 
     useEffect(() => {
         handleGetAllOrder({
@@ -115,7 +99,7 @@ export const ManageOrder = (): React.ReactElement => {
         try {
             const res = await orderApi.getAll(params);
             if (res?.data?.data) {
-                const arr = handleFormatData(res.data.data);
+                const arr: OrderType[] = handleFormatData(res.data.data);
                 setData(arr);
                 setTotalRecord(res.data?.totalRecord);
             }
@@ -127,26 +111,32 @@ export const ManageOrder = (): React.ReactElement => {
     const handleFormatData = (data: any) => {
         const arr: OrderType[] = data.map((item: any) => {
             return {
-                orderId: item._id,
+                order_id: item._id,
                 email: item.email,
-                totalCost: handleCalculateSubTotal(item.listProduct),
-                receiveAddress: item.receiveAddress,
-                paymentMethod: item.paymentMethod,
-                isPurchase: item.isPurchase,
+                list_course: item.list_course,
+                payment_method: item.payment_method,
+                is_purchase: item.is_purchase,
                 createdAt: item.createdAt,
             };
         });
         return arr;
     };
 
-    const handleDeleteOrder = (email: string, orderId: string) => {
+    const handleFormatListCourse = (data: CourseType[]) => {
+        const arr = data.map((item: CourseType) => {
+            return item.name;
+        });
+        return arr;
+    };
+
+    const handleDeleteOrder = (email: string, order_id: string) => {
         ConfirmModal({
             icon: <></>,
             onOk: async () => {
                 try {
                     const params = {
                         email,
-                        orderId,
+                        order_id,
                     };
                     const res = await orderApi.delete(params);
                     if (res && res.status === 200) {
@@ -184,7 +174,7 @@ export const ManageOrder = (): React.ReactElement => {
                     justifyContent: 'end',
                 }}
             >
-                <Button
+                {/* <Button
                     type="primary"
                     onClick={() => {
                         setIsOpenModal(true);
@@ -192,7 +182,7 @@ export const ManageOrder = (): React.ReactElement => {
                     }}
                 >
                     Add order
-                </Button>
+                </Button> */}
             </div>
             <div className="manage-account-table">
                 <div className="table-content">

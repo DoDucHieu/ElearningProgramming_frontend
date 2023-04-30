@@ -26,6 +26,14 @@
                 border-radius: unset;
             }
         }
+        .ant-row{
+            min-height: 650px;
+        }
+        .list-course-pagination{
+            display: flex;
+            justify-content: center;
+            padding-top: 16px;
+        }
     }
        
 }

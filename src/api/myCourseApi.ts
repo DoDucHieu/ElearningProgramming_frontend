@@ -9,6 +9,5 @@ export const myCourseApi = {
         axiosConfig.post('/registry-course', body),
     delete: (params: any) =>
         axiosConfig.delete('/delete-my-course', { params }),
-    deleteAll: (params: any) =>
-        axiosConfig.delete('/delete-all-my-course', { params }),
+    deleteMany: (body: any) => axiosConfig.post('/delete-many-my-course', body),
 };

@@ -8,7 +8,7 @@ import { videoApi } from '../../api/videoApi';
 export const DetailVideo = (): React.ReactElement => {
     const params = useParams();
     const user = JSON.parse(localStorage.getItem('user') || '{}');
-    const email = user.email;
+    const user_id = user.user_id;
     const [dataView, setDataView] = useState<VideoType>();
 
     useEffect(() => {
@@ -55,8 +55,8 @@ export const DetailVideo = (): React.ReactElement => {
                         loop
                         controls
                         style={{
-                            width: '400px',
-                            height: '400px',
+                            width: '1000px',
+                            height: '600px',
                             objectFit: 'cover',
                             marginLeft: 40,
                         }}
@@ -65,8 +65,8 @@ export const DetailVideo = (): React.ReactElement => {
                 </div>
             </div>
             <div className="news-right">
-                {email && (
-                    <Comment _id={params?._id} email={email} type="video" />
+                {user_id && (
+                    <Comment _id={params?._id} user_id={user_id} type="video" />
                 )}
             </div>
         </div>

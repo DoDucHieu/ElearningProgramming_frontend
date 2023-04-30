@@ -1,0 +1,18 @@
+.course-component{
+    .course-infor{
+        width: 100%;
+        display: flex;
+        .course-name{
+            width: 80%;
+            overflow-x: hidden;
+        }
+        .course-view{
+            width: 20%;
+            text-align: right;
+            .view-number{
+                margin-left: 4px;
+                color: red;
+            }
+        }
+    }
+}

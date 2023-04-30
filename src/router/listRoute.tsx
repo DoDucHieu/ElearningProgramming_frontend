@@ -7,7 +7,6 @@ import { ManageNews } from '../pages/ManageNew/ManageNews';
 import { Cart } from '../pages/Cart/Cart';
 import { PaymentSuccess } from '../pages/Payment/PaymentSuccess';
 import { PaymentCancel } from '../pages/Payment/PaymentCancel';
-import { Page } from '../pages/Page/Page';
 import { Contact } from '../pages/Contact/Contact';
 import { MyInfor } from '../pages/MyInfor/MyInfor';
 import { DetailNew } from '../pages/News/DetailNew';
@@ -19,6 +18,8 @@ import { ManageCourse } from '../pages/ManageCourse/ManageCourse';
 import { ManageLesson } from '../pages/ManageLesson/ManageLesson';
 import { ListCourse } from '../pages/Course/ListCourse';
 import { DetailCourse } from '../pages/Course/DetailCourse';
+import { ListMyCourse } from '../pages/MyCourse/ListMyCourse';
+import { ChatComponent } from '../pages/Chat/ChatComponent';
 
 export const adminRoute = [
     {
@@ -57,12 +58,20 @@ export const userRoute = [
         element: <MyInfor />,
     },
     {
+        url: '/list-my-course',
+        element: <ListMyCourse />,
+    },
+    {
         url: '/payment-success/:orderId',
         element: <PaymentSuccess />,
     },
     {
         url: '/payment-cancel/:orderId',
         element: <PaymentCancel />,
+    },
+    {
+        url: '/chat',
+        element: <ChatComponent />,
     },
 ];
 
@@ -95,11 +104,6 @@ export const publicRoute = [
     {
         url: '/detail-video/:_id',
         element: <DetailVideo />,
-    },
-
-    {
-        url: '/page',
-        element: <Page />,
     },
     {
         url: '/contact',

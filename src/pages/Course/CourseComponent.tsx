@@ -1,7 +1,7 @@
 import { Card } from 'antd';
 import Meta from 'antd/es/card/Meta';
 import { EyeOutlined } from '@ant-design/icons';
-import '../../asset/style/NewComponent.scss';
+import '../../asset/style/CourseComponent.scss';
 import { useNavigate } from 'react-router-dom';
 
 export type Props = {
@@ -9,6 +9,7 @@ export type Props = {
     name?: string;
     number_registry?: number;
     img_url?: string;
+    price?: number;
 };
 
 export const CourseComponent = ({
@@ -16,10 +17,11 @@ export const CourseComponent = ({
     name,
     number_registry,
     img_url,
+    price,
 }: Props): React.ReactElement => {
     const navigate = useNavigate();
     return (
-        <div className="new-component">
+        <div className="course-component">
             <Card
                 className="item"
                 hoverable
@@ -39,12 +41,11 @@ export const CourseComponent = ({
             >
                 <Meta
                     title={
-                        <div className="new-infor">
-                            <span className="new-name">{name}</span>
-                            <span className="new-view">
-                                <EyeOutlined />
+                        <div className="course-infor">
+                            <span className="course-name">{name}</span>
+                            <span className="course-view">
                                 <span className="view-number">
-                                    {number_registry}
+                                    {price === 0 ? 'Miễn phí' : `${price}$`}
                                 </span>
                             </span>
                         </div>

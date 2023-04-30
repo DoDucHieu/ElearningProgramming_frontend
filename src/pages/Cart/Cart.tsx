@@ -114,13 +114,10 @@ export const Cart = () => {
                 email,
             };
             const res = await cartApi.deleteAllCart(params);
-            if (res) console.log('delete all cart: ', res?.data);
         } catch (error) {
             console.log(error);
         }
     };
-
-    console.log('list course: ', listCourse);
 
     return (
         <div className="cart">

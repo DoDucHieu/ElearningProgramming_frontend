@@ -8,6 +8,7 @@ import { useSearchParams } from 'react-router-dom';
 import { SearchParams } from '../../type/common';
 import { newsApi } from '../../api/newsApi';
 import { ModalNews } from '../ManageNew/ModalNews';
+import { PaginationComponent } from '../../component/Pagination/PaginationComponent';
 
 export const ListNew = (): React.ReactElement => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -17,6 +18,7 @@ export const ListNew = (): React.ReactElement => {
     const size = searchParams.get('size') || CONSTANT.DEFAULT_SIZE;
     const keyword = searchParams.get('keyword') || CONSTANT.DEFAULT_KEYWORD;
     const [listNews, setListNews] = useState<NewsType[]>();
+    const [totalRecord, setTotalRecord] = useState<number>();
     const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
 
     useEffect(() => {
@@ -32,6 +34,7 @@ export const ListNew = (): React.ReactElement => {
             const res = await newsApi.getAll(params);
             if (res?.data?.data) {
                 setListNews(res.data.data);
+                setTotalRecord(res.data.totalRecord);
             }
         } catch (error) {
             console.log(error);
@@ -74,6 +77,9 @@ export const ListNew = (): React.ReactElement => {
                         );
                     })}
             </Row>
+            <div className="list-new-pagination">
+                <PaginationComponent totalRecord={totalRecord} />
+            </div>
             {isOpenModal && (
                 <ModalNews
                     handleClose={handleClose}

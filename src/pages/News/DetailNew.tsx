@@ -8,8 +8,10 @@ import { NewsType } from '../../type/type';
 export const DetailNew = (): React.ReactElement => {
     const params = useParams();
     const user = JSON.parse(localStorage.getItem('user') || '{}');
-    const email = user.email;
+    const user_id = user.user_id;
     const [dataView, setDataView] = useState<NewsType>();
+
+    console.log('user_id:', user_id);
 
     useEffect(() => {
         params?._id && handleGetDetailNews(params._id);
@@ -61,8 +63,8 @@ export const DetailNew = (): React.ReactElement => {
                 </div>
             </div>
             <div className="news-right">
-                {email && (
-                    <Comment _id={params?._id} email={email} type="new" />
+                {user_id && (
+                    <Comment _id={params?._id} user_id={user_id} type="new" />
                 )}
             </div>
         </div>

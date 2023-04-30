@@ -1,0 +1,9 @@
+.list-message{
+    height: 500px;
+    overflow-y: scroll;
+}
+
+.list-message::-webkit-scrollbar {
+    width: 0px;
+    background: transparent; 
+}   

@@ -1,17 +1,24 @@
 .detail-lesson-user{
     width: 100%;
-    .lesson-name{
-        width: 100%;
-        margin-left: 142px;
-        margin-top: 16px;
-    }
+
     .lesson-content{
+        .lesson-name-video{
+            width: 100%;
+            margin-left: 142px;
+            margin-top: 16px;
+            font-size: 32px;
+        }
         .lesson-content-video{
             display: flex;
             justify-content: center;
         }
         .lesson-content-post{
             padding: 40px 80px;
+        }
+        .lesson-name-post{
+            margin-top: 16px;
+            text-align: center;
+            font-size: 40px;
         }
     }
 }

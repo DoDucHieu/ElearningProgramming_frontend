@@ -1,0 +1,27 @@
+.conversation{
+    width: 100%;
+    height: 54px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    background-color: #fccaca;
+    border-radius: 3px;
+    .conversation-avatar{
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+    .conversation-infor{
+        display: flex;
+        flex-direction: column;
+        margin-left: 8px;
+        .conversation-name{
+            font-size: 16px;
+            font-weight: 600;
+        }
+        .conversation-latest-inbox{
+            font-size: 14px;
+        }
+    }
+}

@@ -31,18 +31,24 @@ export const ListLesson = ({
         });
     }, [page, size, keyword, course_id]);
 
+    useEffect(() => {
+        listLessons && setCurrentLesson(listLessons[0]?._id);
+        listLessons && handleOpenLesson(listLessons[0]?._id);
+    }, [listLessons]);
+
     const handleGetAllLesson = async (params: any): Promise<any> => {
         try {
             const res = await lessonApi.getAll(params);
             if (res?.data?.data) {
                 setListLessons(res.data.data);
                 handleSetTotalLesson(res.data.data.length);
-                handleOpenLesson(res.data.data[0]?._id);
             }
         } catch (error) {
             console.log(error);
         }
     };
+
+    console.log('current: ', currentLesson);
 
     return (
         <div className="list-lesson-user">

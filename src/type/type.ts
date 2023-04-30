@@ -93,11 +93,25 @@ export type MyCourseType = {
 };
 
 export type CommentType = {
-    email?: string;
+    user_id?: string;
+    avatar?: string;
+    full_name?: string;
     comment?: string;
     type?: string;
     video_id?: string;
     new_id?: string;
+    lesson_id?: string;
+};
+
+export type ConversationType = {
+    members?: string[];
+    name?: string;
+};
+
+export type MessageType = {
+    conversation_id?: string;
+    sender_id?: string;
+    text?: string;
 };
 
 export type TokenType = {

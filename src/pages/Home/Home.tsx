@@ -1,19 +1,19 @@
-import { Card, Carousel, Col, Row } from 'antd';
-import Meta from 'antd/es/card/Meta';
-import '../../asset/style/Home.scss';
-import adidas from '../../asset/video/adidas.mp4';
+import { Carousel, Col, Row } from 'antd';
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { CONSTANT } from '../../constant/constant';
-import { CourseType, NewsType, ProductType, VideoType } from '../../type/type';
-import { SearchParams } from '../../type/common';
-import { productApi } from '../../api/productApi';
-import { NewComponent } from '../News/NewComponent';
-import { newsApi } from '../../api/newsApi';
-import { VideoComponent } from '../Video/VideoComponent';
-import { videoApi } from '../../api/videoApi';
 import { courseApi } from '../../api/courseApi';
+import { newsApi } from '../../api/newsApi';
+import { productApi } from '../../api/productApi';
+import { videoApi } from '../../api/videoApi';
+import '../../asset/style/Home.scss';
+import programming from '../../asset/video/programming.mp4';
+import { CONSTANT } from '../../constant/constant';
+import { SearchParams } from '../../type/common';
+import { CourseType, NewsType, ProductType, VideoType } from '../../type/type';
 import { CourseComponent } from '../Course/CourseComponent';
+import { NewComponent } from '../News/NewComponent';
+import { VideoComponent } from '../Video/VideoComponent';
+
 export const Home = (): React.ReactElement => {
     const navigate = useNavigate();
     const [listProduct, setListProduct] = useState<ProductType[]>([]);
@@ -121,19 +121,22 @@ export const Home = (): React.ReactElement => {
                 <div className="banner">
                     <div className="page-header">
                         <div className="page-header-title">
-                            Introducing elearning programming
+                            Giới thiệu chung về website
                         </div>
                         <div className="page-header-content">
-                            <h1>COMPREHENSIVE PROGRAMMING PLATFORM</h1>
+                            <h1>NỀN TẢNG HỌC LẬP TRÌNH TOÀN DIỆN</h1>
                             <span>
-                                Platform with many courses with a variety of
-                                videos and articles.
+                                {/* Platform with many courses with a variety of
+                                videos and articles. */}
+                                Nền tảng có nhiều khóa học với đa dạng video và
+                                bài viết.
                             </span>
                             <div
                                 className="join-us"
-                                onClick={() => navigate('/product')}
+                                onClick={() => navigate('/list-course')}
                             >
-                                Course
+                                {/* Course */}
+                                Khóa học
                             </div>
                         </div>
                     </div>
@@ -148,65 +151,10 @@ export const Home = (): React.ReactElement => {
                                     width: '100%',
                                     height: '86vh',
                                     objectFit: 'cover',
+                                    marginTop: 80,
                                 }}
                             >
-                                <source src={adidas} type="video/mp4" />
-                            </video>
-                        </div>
-                        <div>
-                            <video
-                                autoPlay
-                                muted
-                                loop
-                                style={{
-                                    width: '100%',
-                                    height: '86vh',
-                                    objectFit: 'cover',
-                                }}
-                            >
-                                <source src={adidas} type="video/mp4" />
-                            </video>
-                        </div>
-                        <div>
-                            <video
-                                autoPlay
-                                muted
-                                loop
-                                style={{
-                                    width: '100%',
-                                    height: '86vh',
-                                    objectFit: 'cover',
-                                }}
-                            >
-                                <source src={adidas} type="video/mp4" />
-                            </video>
-                        </div>
-                        <div>
-                            <video
-                                autoPlay
-                                muted
-                                loop
-                                style={{
-                                    width: '100%',
-                                    height: '86vh',
-                                    objectFit: 'cover',
-                                }}
-                            >
-                                <source src={adidas} type="video/mp4" />
-                            </video>
-                        </div>
-                        <div>
-                            <video
-                                autoPlay
-                                muted
-                                loop
-                                style={{
-                                    width: '100%',
-                                    height: '86vh',
-                                    objectFit: 'cover',
-                                }}
-                            >
-                                <source src={adidas} type="video/mp4" />
+                                <source src={programming} type="video/mp4" />
                             </video>
                         </div>
                     </Carousel>
@@ -215,16 +163,23 @@ export const Home = (): React.ReactElement => {
                 <div className="page-header">
                     <div className="page-header-title"></div>
                     <div className="page-header-content">
-                        <h1>ALL COURSE WITH MANY PROGRAMMING HERE</h1>
-                        <span>
+                        {/* <h1>ALL COURSE WITH MANY PROGRAMMING HERE</h1>
+                         */}
+                        <h1>NHIỀU KHÓA HỌC VỚI ĐA DẠNG NGÔN NGỮ LẬP TRÌNH</h1>
+
+                        {/* <span>
                             There are various courses, they are the best choice
                             for you
+                        </span> */}
+                        <span>
+                            Đa dạng khóa học, nơi đây là sự lựa chọn tốt nhất
+                            cho bạn.
                         </span>
                         <div
                             className="join-us"
                             onClick={() => navigate('/product')}
                         >
-                            Course
+                            Khóa học
                         </div>
                     </div>
                 </div>
@@ -242,6 +197,7 @@ export const Home = (): React.ReactElement => {
                                                 item?.number_registry
                                             }
                                             img_url={item?.img_url}
+                                            price={item?.price}
                                         />
                                     </Col>
                                 );
@@ -262,6 +218,7 @@ export const Home = (): React.ReactElement => {
                                                 item?.number_registry
                                             }
                                             img_url={item?.img_url}
+                                            price={item?.price}
                                         />
                                     </Col>
                                 );
@@ -271,10 +228,16 @@ export const Home = (): React.ReactElement => {
                 <div className="page-header">
                     <div className="page-header-title"></div>
                     <div className="page-header-content">
-                        <h1>SOME POST AND VIDEO TRENDING</h1>
-                        <span>
+                        {/* <h1>SOME POST AND VIDEO TRENDING</h1>
+                         */}
+                        <h1>MỘT SỐ BÀI VIẾT VÀ VIDEO NỔI BẬT</h1>
+                        {/* <span>
                             Highlight the unique vibe of each member of the
                             squad in the Air Max 90.
+                        </span> */}
+                        <span>
+                            Tại đây chia sẻ các bài viết và video nổi bật về
+                            công nghệ được quan tâm nhiều nhất.
                         </span>
                         <div
                             className="join-us"

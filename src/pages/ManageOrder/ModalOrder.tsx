@@ -33,13 +33,11 @@ export const ModalOrder = ({
     const handleFillForm = (data: OrderType) => {
         form.setFieldValue('email', data.email);
         form.setFieldValue('paymentMethod', data.payment_method);
-        form.setFieldValue('totalCost', data.total_cost);
     };
 
     const onFinish = () => {
         const data: OrderType = {
             email: form.getFieldValue('email'),
-            total_cost: form.getFieldValue('totalCost'),
             payment_method: form.getFieldValue('paymentMethod'),
         };
         if (typeModal === 'add') handleAddOrder(data);

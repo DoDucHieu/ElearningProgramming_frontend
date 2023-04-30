@@ -1,7 +1,7 @@
 import { Card } from 'antd';
 import Meta from 'antd/es/card/Meta';
 import { EyeOutlined } from '@ant-design/icons';
-import '../../asset/style/NewComponent.scss';
+import '../../asset/style/VideoComponent.scss';
 import { useNavigate } from 'react-router-dom';
 
 export type Props = {
@@ -19,7 +19,7 @@ export const VideoComponent = ({
 }: Props): React.ReactElement => {
     const navigate = useNavigate();
     return (
-        <div className="new-component">
+        <div className="video-component">
             <Card
                 className="item"
                 hoverable
@@ -39,9 +39,9 @@ export const VideoComponent = ({
             >
                 <Meta
                     title={
-                        <div className="new-infor">
-                            <span className="new-name">{name}</span>
-                            <span className="new-view">
+                        <div className="video-infor">
+                            <span className="video-name">{name}</span>
+                            <span className="video-view">
                                 <EyeOutlined />
                                 <span className="view-number">{view}</span>
                             </span>

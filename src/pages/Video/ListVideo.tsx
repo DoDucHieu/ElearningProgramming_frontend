@@ -8,6 +8,7 @@ import { SearchParams } from '../../type/common';
 import { ModalVideo } from '../ManageVideo/ModalVideo';
 import { videoApi } from '../../api/videoApi';
 import { VideoComponent } from './VideoComponent';
+import { PaginationComponent } from '../../component/Pagination/PaginationComponent';
 
 export const ListVideo = (): React.ReactElement => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -17,6 +18,7 @@ export const ListVideo = (): React.ReactElement => {
     const size = searchParams.get('size') || CONSTANT.DEFAULT_SIZE;
     const keyword = searchParams.get('keyword') || CONSTANT.DEFAULT_KEYWORD;
     const [listNews, setListNews] = useState<NewsType[]>();
+    const [totalRecord, setTotalRecord] = useState<number>();
     const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
 
     useEffect(() => {
@@ -32,6 +34,7 @@ export const ListVideo = (): React.ReactElement => {
             const res = await videoApi.getAll(params);
             if (res?.data?.data) {
                 setListNews(res.data.data);
+                setTotalRecord(res.data.totalRecord);
             }
         } catch (error) {
             console.log(error);
@@ -74,6 +77,9 @@ export const ListVideo = (): React.ReactElement => {
                         );
                     })}
             </Row>
+            <div className="list-new-pagination">
+                <PaginationComponent totalRecord={totalRecord} />
+            </div>
             {isOpenModal && (
                 <ModalVideo
                     handleClose={handleClose}

@@ -9,6 +9,7 @@ import { SearchParams } from '../../type/common';
 import { courseApi } from '../../api/courseApi';
 import { FilterCourseComponent } from './FilterCourseComponent';
 import { SearchComponent } from '../../component/SearchComponent/SearchComponent';
+import { PaginationComponent } from '../../component/Pagination/PaginationComponent';
 
 export const ListCourse = (): React.ReactElement => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -17,21 +18,25 @@ export const ListCourse = (): React.ReactElement => {
     const page = searchParams.get('page') || CONSTANT.DEFAULT_PAGE;
     const size = searchParams.get('size') || CONSTANT.DEFAULT_SIZE;
     const keyword = searchParams.get('keyword') || CONSTANT.DEFAULT_KEYWORD;
+    const filter = searchParams.get('filter') || CONSTANT.DEFAULT_FILTER;
     const [listCourses, setListCourses] = useState<CourseType[]>();
+    const [totalRecord, setTotalRecord] = useState<number>();
 
     useEffect(() => {
         handleGetAllCourse({
             page,
             size,
             keyword,
+            filter,
         });
-    }, [page, size, keyword]);
+    }, [page, size, keyword, filter]);
 
     const handleGetAllCourse = async (params: SearchParams): Promise<any> => {
         try {
             const res = await courseApi.getAll(params);
             if (res?.data?.data) {
                 setListCourses(res.data.data);
+                setTotalRecord(res.data.totalRecord);
             }
         } catch (error) {
             console.log(error);
@@ -63,11 +68,15 @@ export const ListCourse = (): React.ReactElement => {
                                         name={item?.name}
                                         number_registry={item?.number_registry}
                                         img_url={item?.img_url}
+                                        price={item?.price}
                                     />
                                 </Col>
                             );
                         })}
                 </Row>
+                <div className="list-course-pagination">
+                    <PaginationComponent totalRecord={totalRecord} />
+                </div>
             </div>
         </div>
     );

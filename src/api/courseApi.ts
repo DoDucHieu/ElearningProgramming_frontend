@@ -9,7 +9,7 @@ export const courseApi = {
     edit: (body: CourseType) => axiosConfig.put('/edit-course', body),
     delete: (params: any) => axiosConfig.delete('/delete-course', { params }),
     increaseRegistryCourse: (body: CourseType) =>
-        axiosConfig.put('/increase-registry-course', body),
+        axiosConfig.post('/increase-registry-course', body),
     getAllFreeCourse: (params: any) =>
         axiosConfig.get('/get-all-free-course', { params }),
     getAllProCourse: (params: any) =>

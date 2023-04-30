@@ -13,10 +13,12 @@ import { toast } from 'react-toastify';
 import { cartAction } from '../../store/action/cartAction';
 import { AppDispatch } from '../../store/store';
 import { useDispatch } from 'react-redux';
+import { Comment } from '../../component/Comment/Comment';
 
 export const DetailCourse = (): React.ReactElement => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const email = user.email;
+    const user_id = user.user_id;
     const params = useParams();
     const dispatch: AppDispatch = useDispatch();
     const [detailCourse, setDetailCourse] = useState<CourseType>();
@@ -103,17 +105,28 @@ export const DetailCourse = (): React.ReactElement => {
     return (
         <>
             {isRegistryCourse ? (
-                <div className="detail-course-user">
-                    <div className="detail-course-left">
-                        <DetailLesson _id={currentLesson} />
+                <>
+                    <div className="detail-course-user">
+                        <div className="detail-course-left">
+                            <DetailLesson _id={currentLesson} />
+                        </div>
+                        <div className="detail-course-right">
+                            <ListLesson
+                                course_id={params?._id}
+                                handleOpenLesson={handleOpenLesson}
+                            />
+                        </div>
                     </div>
-                    <div className="detail-course-right">
-                        <ListLesson
-                            course_id={params?._id}
-                            handleOpenLesson={handleOpenLesson}
-                        />
-                    </div>
-                </div>
+                    {currentLesson && user_id && (
+                        <div className="lesson-comment">
+                            <Comment
+                                _id={currentLesson}
+                                user_id={user_id}
+                                type="lesson"
+                            />
+                        </div>
+                    )}
+                </>
             ) : (
                 <div className="detail-course-user-no-registry">
                     <div className="detail-course-left">

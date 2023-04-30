@@ -6,7 +6,7 @@ import {
     WalletOutlined,
     PlayCircleOutlined,
 } from '@ant-design/icons';
-import shoeBG from '../../asset/image/shoeBG.jpg';
+import shoeBG from '../../asset/image/sign_in_bg.jpg';
 import { Layout, Menu } from 'antd';
 import { useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';

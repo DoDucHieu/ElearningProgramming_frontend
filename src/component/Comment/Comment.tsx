@@ -8,11 +8,11 @@ import { CommentType } from '../../type/type';
 
 export type Props = {
     _id?: string;
-    email?: string;
+    user_id?: string;
     type?: string;
 };
 
-export const Comment = ({ _id, email, type }: Props) => {
+export const Comment = ({ _id, user_id, type }: Props) => {
     const [comment, setComment] = useState('');
     const [listComment, setListComment] = useState<CommentType[]>([]);
 
@@ -23,10 +23,24 @@ export const Comment = ({ _id, email, type }: Props) => {
                 type,
             };
             const res = await commentApi.getAll(params);
-            setListComment(res?.data?.data.reverse());
+            setListComment(handleFormatListComment(res?.data?.data.reverse()));
         } catch (e) {
             console.log('error: ', e);
         }
+    };
+
+    const handleFormatListComment = (data: any) => {
+        const arr: CommentType[] = data.map((item: any) => {
+            return {
+                user_id: item?.user_id?._id,
+                avatar: item?.user_id?.avatar,
+                full_name: item?.user_id?.fullName,
+                comment: item?.comment,
+                type: item?.type,
+                new_id: item?.new_id,
+            };
+        });
+        return arr;
     };
 
     const handleAddComment = async () => {
@@ -35,7 +49,7 @@ export const Comment = ({ _id, email, type }: Props) => {
                 const data = {
                     comment: comment,
                     _id,
-                    email,
+                    user_id,
                     type,
                 };
                 await commentApi.create(data);
@@ -49,8 +63,8 @@ export const Comment = ({ _id, email, type }: Props) => {
     };
 
     useEffect(() => {
-        handleGetAllComment();
-    }, []);
+        _id && handleGetAllComment();
+    }, [_id, user_id]);
 
     return (
         <div className="comment">
@@ -77,11 +91,9 @@ export const Comment = ({ _id, email, type }: Props) => {
                     renderItem={(item) => (
                         <List.Item>
                             <List.Item.Meta
-                                avatar={
-                                    <Avatar src="https://joeschmoe.io/api/v1/random" />
-                                }
-                                title={item.email}
-                                description={item.comment}
+                                avatar={<Avatar src={item?.avatar} />}
+                                title={item?.full_name}
+                                description={item?.comment}
                             />
                         </List.Item>
                     )}
