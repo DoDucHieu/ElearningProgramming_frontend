@@ -156,7 +156,7 @@ export const ManageVideo = (): React.ReactElement => {
                 img_url: item.img_url,
                 description: item?.description,
                 video_url: item.video_url,
-                author: item.author,
+                author: item.author?.fullName,
                 is_approved: item.is_approved,
             };
         });
@@ -171,7 +171,7 @@ export const ManageVideo = (): React.ReactElement => {
                     const params = {
                         _id,
                     };
-                    const res = await newsApi.delete(params);
+                    const res = await videoApi.delete(params);
                     if (res?.data?.errCode === 0) {
                         toast.success(res.data.errMessage);
                         await handleGetAllVideo({ page, size });
@@ -184,7 +184,7 @@ export const ManageVideo = (): React.ReactElement => {
             },
             className: 'confirm__modal',
             title: 'Bạn có chắc muốn xóa không',
-            description: 'Bài đăng này sẽ bị xóa vĩnh viễn',
+            description: 'Video này sẽ bị xóa vĩnh viễn',
             canceText: `Hủy bỏ`,
             okText: 'Xóa',
         });

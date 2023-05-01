@@ -42,8 +42,11 @@ export const ModalDetailVideo = ({
                 width={1000}
             >
                 <div className="video-author">
-                    <div className="author-avatar"></div>
-                    <span>{dataView?.author}</span>
+                    <img
+                        className="author-avatar"
+                        src={dataView?.author?.avatar}
+                    />
+                    <span>{dataView?.author?.fullName}</span>
                 </div>
                 <div className="video-content">
                     <video

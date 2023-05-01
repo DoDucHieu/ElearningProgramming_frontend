@@ -43,8 +43,11 @@ export const ModalDetailNews = ({
                     <div className="news-left" style={{ width: '100%' }}>
                         <h1 className="news-name">{dataView?.name}</h1>
                         <div className="author">
-                            <div className="author-avatar"></div>
-                            <span>{dataView?.author}</span>
+                            <img
+                                className="author-avatar"
+                                src={dataView?.author?.avatar}
+                            />
+                            <span>{dataView?.author?.fullName}</span>
                         </div>
                         <div className="view-news">
                             <div

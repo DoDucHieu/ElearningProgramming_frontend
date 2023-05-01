@@ -49,7 +49,7 @@ export type NewsType = {
     description?: string;
     contentMarkdown?: string;
     contentHTML?: string;
-    author?: string;
+    author?: UserType;
     img_url?: string;
     is_approved?: string;
     view?: number;
@@ -59,7 +59,7 @@ export type VideoType = {
     _id?: string;
     name?: string;
     description?: string;
-    author?: string;
+    author?: UserType;
     img_url?: string;
     video_url?: string;
     is_approved?: string;

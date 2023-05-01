@@ -1,14 +1,21 @@
 import '../../asset/style/ChatForm.scss';
 import { Button, Form } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
-import { useSearchParams } from 'react-router-dom';
 import { messageApi } from '../../api/messageApi';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store/store';
 
-export const ChatForm = (): React.ReactElement => {
+export type Props = {
+    socket?: any;
+    setListMessage?: any;
+};
+
+export const ChatForm = ({ socket }: Props): React.ReactElement => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const user_id = user.user_id;
-    const [searchParams, setSearchParams] = useSearchParams();
-    const conversation_id = searchParams.get('conversation_id');
+    const conversation_id = useSelector(
+        (state: RootState) => state.conversationReducer.conversation_id,
+    );
     const [form] = Form.useForm();
 
     const onFinish = async () => {
@@ -17,12 +24,19 @@ export const ChatForm = (): React.ReactElement => {
                 const data = {
                     sender_id: user_id,
                     conversation_id,
-                    text: form.getFieldValue('text'),
+                    text: form.getFieldValue('text').trim(),
                 };
-                const res = await messageApi.add(data);
-                if (res?.data?.data) {
-                    console.log('send message: ', res.data.data);
-                    form.setFieldValue('text', '');
+                if (data.text) {
+                    socket.current.emit('sendMessage', {
+                        conversationId: data.conversation_id,
+                        senderId: data.sender_id,
+                        text: data.text,
+                    });
+                    const res = await messageApi.add(data);
+                    if (res?.data?.data) {
+                        console.log('send message: ', res.data.data);
+                        form.setFieldValue('text', '');
+                    }
                 }
             }
         } catch (e) {

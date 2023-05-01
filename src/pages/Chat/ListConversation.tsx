@@ -5,9 +5,13 @@ import { Conversation } from './Conversation';
 
 export type Props = {
     user_id: string;
+    socket?: any;
 };
 
-export const ListConversation = ({ user_id }: Props): React.ReactElement => {
+export const ListConversation = ({
+    user_id,
+    socket,
+}: Props): React.ReactElement => {
     const [ListConversation, setListConversation] = useState<any>();
 
     useEffect(() => {
@@ -28,13 +32,18 @@ export const ListConversation = ({ user_id }: Props): React.ReactElement => {
             console.log(e);
         }
     };
+
     return (
         <div className="list-conversation">
             {ListConversation?.map((item: any) => {
                 return (
                     <Conversation
                         conversation_id={item?._id}
-                        receiver_id={item?.members[1]}
+                        receiver_id={
+                            user_id === item?.members[0]
+                                ? item?.members[1]
+                                : item?.members[0]
+                        }
                     />
                 );
             })}

@@ -1,0 +1,50 @@
+.user-contact{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .avatar{
+        width: 240px;
+        height: 240px;
+        object-fit: cover;
+        border-radius: 50%;
+    }
+    .name{
+        font-size: 24px;
+        font-weight: 600;
+        margin-top: 12px;
+    }
+    .feature{
+        display: flex;
+        align-items: center;
+        .call{
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #fff3f3;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            span{
+                font-size: 24px;
+                cursor: pointer;
+            }
+        }
+        .seperate{
+            width: 12px;
+        }
+        .message{
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #fff3f3;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            span{
+                font-size: 24px;
+                cursor: pointer;
+            }
+        }
+    }
+}

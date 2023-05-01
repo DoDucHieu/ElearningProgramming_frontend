@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { commentApi } from '../../api/commentApi';
 import '../../asset/style/Comment.scss';
 import { CommentType } from '../../type/type';
+import { ModalUserContact } from '../ModalUserContact/ModaUserContact';
 
 export type Props = {
     _id?: string;
@@ -15,6 +16,8 @@ export type Props = {
 export const Comment = ({ _id, user_id, type }: Props) => {
     const [comment, setComment] = useState('');
     const [listComment, setListComment] = useState<CommentType[]>([]);
+    const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
+    const [userContact, setUserContact] = useState<string>();
 
     const handleGetAllComment = async () => {
         try {
@@ -66,6 +69,10 @@ export const Comment = ({ _id, user_id, type }: Props) => {
         _id && handleGetAllComment();
     }, [_id, user_id]);
 
+    const handleClose = () => {
+        setIsOpenModal(false);
+    };
+
     return (
         <div className="comment">
             <div className="add-comment">
@@ -91,13 +98,28 @@ export const Comment = ({ _id, user_id, type }: Props) => {
                     renderItem={(item) => (
                         <List.Item>
                             <List.Item.Meta
-                                avatar={<Avatar src={item?.avatar} />}
+                                avatar={
+                                    <Avatar
+                                        style={{ cursor: 'pointer' }}
+                                        src={item?.avatar}
+                                        onClick={() => {
+                                            setIsOpenModal(true);
+                                            setUserContact(item?.user_id);
+                                        }}
+                                    />
+                                }
                                 title={item?.full_name}
                                 description={item?.comment}
                             />
                         </List.Item>
                     )}
                 />
+                {isOpenModal && userContact && (
+                    <ModalUserContact
+                        receiver_id={userContact}
+                        handleClose={handleClose}
+                    />
+                )}
             </div>
         </div>
     );

@@ -156,7 +156,7 @@ export const ManageNews = (): React.ReactElement => {
                 contentHTML: item.contentHTML,
                 contentMarkdown: item.contentMarkdown,
                 img_url: item.img_url,
-                author: item.author,
+                author: item?.author?.fullName,
                 is_approved: item.is_approved,
             };
         });

@@ -29,7 +29,7 @@ export const ModalNews = ({
     dataToModal,
 }: Props): React.ReactElement => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
-    const email = user.email;
+    const user_id = user.user_id;
     const [form] = Form.useForm();
     const [searchParams] = useSearchParams();
     const page = searchParams.get('page') || CONSTANT.DEFAULT_PAGE;
@@ -93,7 +93,7 @@ export const ModalNews = ({
             contentHTML,
             contentMarkdown,
             img_url: imgUrl,
-            author: email,
+            author: user_id,
         };
         if (typeModal === 'add') handleAddNews(data);
         if (typeModal === 'edit' && dataToModal) {

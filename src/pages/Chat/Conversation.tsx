@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
-import '../../asset/style/Conversation.scss';
+import { useDispatch } from 'react-redux';
 import { userApi } from '../../api/userApi';
+import '../../asset/style/Conversation.scss';
+import { conversationAction } from '../../store/action/conversationAction';
+import { AppDispatch } from '../../store/store';
 import { UserType } from '../../type/type';
-import { useSearchParams } from 'react-router-dom';
 
 export type Props = {
     conversation_id: string;
@@ -13,7 +15,7 @@ export const Conversation = ({
     conversation_id,
     receiver_id,
 }: Props): React.ReactElement => {
-    const [searchParams, setSearchParams] = useSearchParams();
+    const dispatch: AppDispatch = useDispatch();
     const [receive, setReceive] = useState<UserType>();
 
     useEffect(() => {
@@ -31,21 +33,42 @@ export const Conversation = ({
             if (res?.data?.data) {
                 console.log(res.data.data);
                 setReceive(res.data.data);
+                dispatch(
+                    conversationAction.changeReceiverAvatar(
+                        res.data.data?.avatar,
+                    ),
+                );
+                dispatch(
+                    conversationAction.changeReceiverName(
+                        res.data.data?.fullName,
+                    ),
+                );
             }
         } catch (e) {
             console.log(e);
         }
     };
 
-    const handleClickChangeConversation = (conversation_id: string) => {
-        searchParams.set('conversation_id', conversation_id);
-        setSearchParams(searchParams);
+    const handleClickChangeConversation = (
+        conversation_id: string,
+        receiverName?: string,
+        receiverAvatar?: string,
+    ) => {
+        dispatch(conversationAction.changeConversationId(conversation_id));
+        dispatch(conversationAction.changeReceiverName(receiverName));
+        dispatch(conversationAction.changeReceiverAvatar(receiverAvatar));
     };
 
     return (
         <div
             className="conversation"
-            onClick={() => handleClickChangeConversation(conversation_id)}
+            onClick={() =>
+                handleClickChangeConversation(
+                    conversation_id,
+                    receive?.fullName,
+                    receive?.avatar,
+                )
+            }
         >
             <img className="conversation-avatar" src={receive?.avatar} />
             <div className="conversation-infor">
