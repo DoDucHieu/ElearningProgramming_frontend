@@ -1,4 +1,5 @@
 import '../../asset/style/DetailConversation.scss';
+import { useEffect } from 'react';
 import { ListMessage } from './ListMessage';
 import { ChatForm } from './ChatForm';
 import { RootState } from '../../store/store';
@@ -6,23 +7,58 @@ import { useSelector } from 'react-redux';
 import { PhoneOutlined, VideoCameraOutlined } from '@ant-design/icons';
 import { useState } from 'react';
 import { ModalVideoCall } from '../../component/Header/ModalVideoCall/ModalVideoCall';
+import { ModalConfirmVideoCall } from '../../component/Header/ModalVideoCall/ModalConfirmVideoCall';
 
 export type Props = {
     socket?: any;
 };
 
 export const DetailConversation = ({ socket }: Props): React.ReactElement => {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const user_id = user.user_id;
+
+    const receiver_id = useSelector(
+        (state: RootState) => state.conversationReducer.receiver_id,
+    );
     const receiver_avatar = useSelector(
         (state: RootState) => state.conversationReducer.receiver_avatar,
     );
     const receiver_name = useSelector(
         (state: RootState) => state.conversationReducer.receiver_name,
     );
-    const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
+    const [isOpenModalVideoCall, setIsOpenModalVideoCall] =
+        useState<boolean>(false);
+    const [isOpenModalConfirmVideoCall, setIsOpenModalConfirmVideoCall] =
+        useState<boolean>(false);
+    const [acceptVideoCall, setAcceptVideoCall] = useState<boolean>(false);
 
-    const handleClose = () => {
-        setIsOpenModal(false);
+    const [senderId, setSenderId] = useState<string>();
+
+    const handleCloseModalVideoCall = (type: string) => {
+        type === 'caller'
+            ? setIsOpenModalVideoCall(false)
+            : setAcceptVideoCall(false);
     };
+
+    const handleCloseModalConfirmVideoCall = () => {
+        setIsOpenModalConfirmVideoCall(false);
+    };
+
+    const handleAcceptVideoCall = () => {
+        setAcceptVideoCall(true);
+    };
+
+    useEffect(() => {
+        user_id &&
+            socket.current &&
+            socket.current.on(`getVideoCall${user_id}`, (sender_id: string) => {
+                console.log('Người đang gọi đến: ', sender_id);
+                if (sender_id) {
+                    setSenderId(sender_id);
+                    setIsOpenModalConfirmVideoCall(true);
+                }
+            });
+    }, [socket?.current, user_id]);
 
     return (
         <div className="detail-conversation">
@@ -43,15 +79,17 @@ export const DetailConversation = ({ socket }: Props): React.ReactElement => {
                     <span
                         className="video-call"
                         onClick={() => {
-                            setIsOpenModal(true);
+                            setIsOpenModalVideoCall(true);
                         }}
                     >
                         <VideoCameraOutlined />
                     </span>
-                    {isOpenModal && (
+                    {isOpenModalVideoCall && (
                         <ModalVideoCall
-                            handleClose={handleClose}
+                            handleClose={handleCloseModalVideoCall}
                             socket={socket}
+                            receiver_id={receiver_id}
+                            type="caller"
                         />
                     )}
                 </div>
@@ -62,6 +100,21 @@ export const DetailConversation = ({ socket }: Props): React.ReactElement => {
             <div className="detail-conversation-footer">
                 <ChatForm socket={socket} />
             </div>
+            {senderId && isOpenModalConfirmVideoCall && (
+                <ModalConfirmVideoCall
+                    socket={socket}
+                    sender_id={senderId}
+                    handleClose={handleCloseModalConfirmVideoCall}
+                    handleAcceptVideoCall={handleAcceptVideoCall}
+                />
+            )}
+            {senderId && acceptVideoCall && (
+                <ModalVideoCall
+                    handleClose={handleCloseModalVideoCall}
+                    socket={socket}
+                    type="answer"
+                />
+            )}
         </div>
     );
 };

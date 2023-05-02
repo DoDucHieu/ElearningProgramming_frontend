@@ -4,12 +4,14 @@ export type ConversationReducer = {
     conversation_id?: string | null;
     receiver_avatar?: string | null;
     receiver_name?: string | null;
+    receiver_id?: string | null;
 };
 
 const initialState: ConversationReducer = {
     conversation_id: null,
     receiver_avatar: null,
     receiver_name: null,
+    receiver_id: null,
 };
 
 export const conversationReducer = (
@@ -31,6 +33,11 @@ export const conversationReducer = (
             return {
                 ...state,
                 receiver_name: action.payload,
+            };
+        case actionType.CHANGE_RECEIVER_ID:
+            return {
+                ...state,
+                receiver_id: action.payload,
             };
         default:
             return state;

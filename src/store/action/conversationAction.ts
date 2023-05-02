@@ -28,8 +28,18 @@ const changeReceiverName = (receiver_name?: string) => {
     };
 };
 
+const changeReceiverId = (receiver_id?: string) => {
+    return (dispatch: AppDispatch) => {
+        dispatch({
+            type: actionType.CHANGE_RECEIVER_ID,
+            payload: receiver_id,
+        });
+    };
+};
+
 export const conversationAction = {
     changeConversationId,
     changeReceiverAvatar,
     changeReceiverName,
+    changeReceiverId,
 };

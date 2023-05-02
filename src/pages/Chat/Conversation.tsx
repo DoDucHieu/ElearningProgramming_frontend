@@ -53,10 +53,12 @@ export const Conversation = ({
         conversation_id: string,
         receiverName?: string,
         receiverAvatar?: string,
+        receiver_id?: string,
     ) => {
         dispatch(conversationAction.changeConversationId(conversation_id));
         dispatch(conversationAction.changeReceiverName(receiverName));
         dispatch(conversationAction.changeReceiverAvatar(receiverAvatar));
+        dispatch(conversationAction.changeReceiverId(receiver_id));
     };
 
     return (
@@ -67,6 +69,7 @@ export const Conversation = ({
                     conversation_id,
                     receive?.fullName,
                     receive?.avatar,
+                    receive?._id,
                 )
             }
         >
