@@ -6,8 +6,8 @@ import { RootState } from '../../store/store';
 import { useSelector } from 'react-redux';
 import { PhoneOutlined, VideoCameraOutlined } from '@ant-design/icons';
 import { useState } from 'react';
-import { ModalVideoCall } from '../../component/Header/ModalVideoCall/ModalVideoCall';
-import { ModalConfirmVideoCall } from '../../component/Header/ModalVideoCall/ModalConfirmVideoCall';
+import { ModalVideoCall } from '../../component/ModalVideoCall/ModalVideoCall';
+import { ModalConfirmVideoCall } from '../../component/ModalVideoCall/ModalConfirmVideoCall';
 
 export type Props = {
     socket?: any;

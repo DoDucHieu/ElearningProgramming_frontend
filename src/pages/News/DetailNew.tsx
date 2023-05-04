@@ -13,8 +13,6 @@ export const DetailNew = (): React.ReactElement => {
     const [dataView, setDataView] = useState<NewsType>();
     const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
 
-    console.log('user_id:', user_id);
-
     useEffect(() => {
         params?._id && handleGetDetailNews(params._id);
     }, [params?._id]);

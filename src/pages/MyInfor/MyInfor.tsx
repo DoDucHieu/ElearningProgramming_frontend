@@ -92,7 +92,6 @@ export const MyInfor = (): React.ReactElement => {
                 ...values,
                 avatar: `${imgUrl}`,
             };
-            console.log(data);
             const res = await userApi.edit(data);
             if (res?.data?.errCode === 0) {
                 toast.success(res.data?.errMessage);

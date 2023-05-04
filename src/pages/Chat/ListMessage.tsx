@@ -29,8 +29,6 @@ export const ListMessage = ({ socket }: Props): React.ReactElement => {
         conversation_id && user_id && handleGetAllMessage(conversation_id);
     }, [conversation_id, user_id]);
 
-    console.log('conversation id: ', conversation_id);
-
     useEffect(() => {
         console.log('socket: ', socket);
 

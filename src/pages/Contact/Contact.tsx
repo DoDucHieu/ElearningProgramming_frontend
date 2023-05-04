@@ -15,11 +15,11 @@ export const Contact = (): React.ReactElement => {
         <div className="contact">
             <div className="contact-bg">
                 <div className="contact-left">
-                    <h1>Let's chat.</h1>
-                    <h1>Tell me about anything</h1>
-                    <h1>you want.</h1>
+                    <h1>Cùng trò chuyện.</h1>
+                    <h1>Hãy cho chúng tôi biết những điều</h1>
+                    <h1>bạn muốn.</h1>
                     <div className="something-together">
-                        Let's create something together
+                        Hãy làm mọi thứ cùng nhau bạn nhé!
                     </div>
                     <div className="associate-network">
                         <div className="app-email">
@@ -28,11 +28,11 @@ export const Contact = (): React.ReactElement => {
                         </div>
                         <div className="app-email">
                             <InstagramOutlined />
-                            <p>hieuncncnc@gmail.com</p>
+                            <p>https://www.instagram.com/doduchieu_7</p>
                         </div>
                         <div className="app-email">
                             <FacebookOutlined />
-                            <p>hieuncncnc@gmail.com</p>
+                            <p>https://www.facebook.com/hieuncncnc</p>
                         </div>
                     </div>
                 </div>
@@ -54,15 +54,15 @@ export const Contact = (): React.ReactElement => {
                                 rules={[
                                     {
                                         required: true,
-                                        message: 'Please input your email!',
+                                        message: 'Nhập email của bạn!',
                                     },
                                     {
                                         type: 'email',
-                                        message: 'Email is not correct!',
+                                        message: 'Email không hợp lệ!',
                                     },
                                 ]}
                             >
-                                <Input placeholder="Your email" />
+                                <Input placeholder="Email" />
                             </Form.Item>
 
                             <Form.Item
@@ -70,11 +70,11 @@ export const Contact = (): React.ReactElement => {
                                 rules={[
                                     {
                                         required: true,
-                                        message: 'Please input your full name!',
+                                        message: 'Nhập họ tên của bạn!',
                                     },
                                 ]}
                             >
-                                <Input placeholder="Full name" />
+                                <Input placeholder="Họ tên" />
                             </Form.Item>
 
                             <Form.Item
@@ -82,12 +82,11 @@ export const Contact = (): React.ReactElement => {
                                 rules={[
                                     {
                                         required: true,
-                                        message:
-                                            'Please tell us about your reason!',
+                                        message: 'Nhập điều bạn muốn',
                                     },
                                 ]}
                             >
-                                <TextArea placeholder="Tell us about your reason?" />
+                                <TextArea placeholder="Hãy cho chúng tôi biết điều bạn muốn" />
                             </Form.Item>
 
                             <Button
@@ -95,7 +94,7 @@ export const Contact = (): React.ReactElement => {
                                 htmlType="submit"
                                 form="form-contact"
                             >
-                                Send
+                                Liên hệ
                             </Button>
                         </Form>
                     </div>

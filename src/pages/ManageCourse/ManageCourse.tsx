@@ -34,7 +34,6 @@ export const ManageCourse = (): React.ReactElement => {
                 <span
                     style={{ cursor: 'pointer' }}
                     onClick={() => {
-                        console.log('course_id: ', record._id);
                         navigate(`/manage-lesson/${record._id}`);
                     }}
                 >

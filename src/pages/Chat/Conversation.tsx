@@ -31,7 +31,6 @@ export const Conversation = ({
             };
             const res = await userApi.getDetailUserById(params);
             if (res?.data?.data) {
-                console.log(res.data.data);
                 setReceive(res.data.data);
                 dispatch(
                     conversationAction.changeReceiverAvatar(
@@ -76,7 +75,7 @@ export const Conversation = ({
             <img className="conversation-avatar" src={receive?.avatar} />
             <div className="conversation-infor">
                 <div className="conversation-name">{receive?.fullName}</div>
-                <div className="conversation-latest-inbox">hello</div>
+                <div className="conversation-latest-inbox"></div>
             </div>
         </div>
     );

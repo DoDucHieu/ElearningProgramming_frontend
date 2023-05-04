@@ -10,7 +10,6 @@ export type Props = {
 
 export const DetailLesson = ({ _id }: Props): React.ReactElement => {
     const [dataView, setDataView] = useState<LessonType>();
-    console.log('detail lesson: ', _id);
 
     useEffect(() => {
         _id && handleGetDetailLesson(_id);

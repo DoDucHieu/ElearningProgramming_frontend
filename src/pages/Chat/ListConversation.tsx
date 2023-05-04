@@ -25,7 +25,6 @@ export const ListConversation = ({
             };
             const res = await conversationApi.getAll(params);
             if (res?.data?.data) {
-                console.log(res.data.data);
                 setListConversation(res.data.data);
             }
         } catch (e) {

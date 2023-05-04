@@ -21,7 +21,6 @@ export const PaymentSuccess = (): React.ReactElement => {
                 email,
             };
             const res = await cartApi.deleteAllCart(params);
-            if (res) console.log('delete all cart: ', res?.data);
         } catch (error) {
             console.log(error);
         }
@@ -35,7 +34,6 @@ export const PaymentSuccess = (): React.ReactElement => {
             };
             const res = await orderApi.getDetail(param);
             if (res?.data?.data) {
-                console.log('Check detail order: ', res.data.data);
                 const data = {
                     list_course: res.data.data?.list_course,
                 };
@@ -48,12 +46,7 @@ export const PaymentSuccess = (): React.ReactElement => {
 
     const handleIncreaseRegistryCourse = async (data: any): Promise<any> => {
         try {
-            console.log('data to increase course: ', data);
-
             const res = await courseApi.increaseRegistryCourse(data);
-            if (res?.data) {
-                console.log('Check increase registry course: ', res.data);
-            }
         } catch (error) {
             console.log(error);
         }

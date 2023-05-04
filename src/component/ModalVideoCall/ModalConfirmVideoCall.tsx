@@ -1,4 +1,4 @@
-import '../../../asset/style/ModalUserContact.scss';
+import '../../asset/style/ModalUserContact.scss';
 import { useEffect, useState } from 'react';
 import { Modal } from 'antd';
 import {
@@ -7,8 +7,8 @@ import {
     MessageOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { userApi } from '../../../api/userApi';
-import { UserType } from '../../../type/type';
+import { userApi } from '../../api/userApi';
+import { UserType } from '../../type/type';
 import { ModalVideoCall } from './ModalVideoCall';
 
 export type Props = {

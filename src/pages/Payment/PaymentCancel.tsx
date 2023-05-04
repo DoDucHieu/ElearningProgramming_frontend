@@ -22,7 +22,6 @@ export const PaymentCancel = (): React.ReactElement => {
             };
             const res = await orderApi.getDetail(param);
             if (res?.data?.data) {
-                console.log('Check detail order: ', res.data.data);
                 const data = {
                     email,
                     list_course: res.data.data?.list_course,
@@ -41,7 +40,6 @@ export const PaymentCancel = (): React.ReactElement => {
                 order_id: params?.orderId,
             };
             const res = await orderApi.delete(param);
-            if (res?.data) console.log('Check delete order: ', res.data);
         } catch (error) {
             console.log(error);
         }
@@ -49,11 +47,8 @@ export const PaymentCancel = (): React.ReactElement => {
 
     const handleDeleteManyMyCourse = async (params: any): Promise<any> => {
         try {
-            console.log('data to delete: ', params);
-
             const res = await myCourseApi.deleteMany(params);
             if (res?.data) {
-                console.log('Check delete many my course: ', res.data);
                 await handleDeleteOrder();
             }
         } catch (error) {

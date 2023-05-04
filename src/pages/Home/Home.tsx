@@ -61,7 +61,6 @@ export const Home = (): React.ReactElement => {
         try {
             const res = await courseApi.getAllFreeCourse(params);
             if (res?.data?.data) {
-                console.log('free: ', res.data);
                 setListFreeCourse(res.data.data);
             }
         } catch (error) {
@@ -75,7 +74,6 @@ export const Home = (): React.ReactElement => {
         try {
             const res = await courseApi.getAllProCourse(params);
             if (res?.data?.data) {
-                console.log('pro: ', res.data);
                 setListProCourse(res.data.data);
             }
         } catch (error) {

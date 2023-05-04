@@ -48,8 +48,6 @@ export const ListLesson = ({
         }
     };
 
-    console.log('current: ', currentLesson);
-
     return (
         <div className="list-lesson-user">
             {listLessons?.length > 0 ? (

@@ -112,7 +112,7 @@ const LayoutWrapper = () => {
             key: 7,
             label: (
                 <div>
-                    <ContactsOutlined />
+                    <PhoneOutlined />
                     <span>Trò chuyện</span>
                 </div>
             ),
@@ -123,7 +123,7 @@ const LayoutWrapper = () => {
             key: 8,
             label: (
                 <div>
-                    <PhoneOutlined />
+                    <ContactsOutlined />
                     <span>Liên hệ</span>
                 </div>
             ),

@@ -70,7 +70,6 @@ export const ModalLesson = ({
             return;
         }
         setSelectedVideo(e.target.files[0]);
-        console.log('file:', e.target.files[0]);
     };
 
     const uploadVideo = async () => {

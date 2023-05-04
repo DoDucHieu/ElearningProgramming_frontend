@@ -1,9 +1,12 @@
+import '../../asset/style/ModalVideoCall.scss';
 import { useEffect, useState, useRef } from 'react';
 import { Button, Modal } from 'antd';
 import {
     PhoneOutlined,
     VideoCameraOutlined,
     MessageOutlined,
+    AudioOutlined,
+    AudioMutedOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { Peer } from 'peerjs';
@@ -29,12 +32,6 @@ export const ModalVideoCall = ({
     const peer = new Peer(user_id);
     peer.on('open', function (id) {
         console.log('My peer ID is: ' + id);
-    });
-
-    peer.on('connection', function (conn) {
-        conn.on('data', function (data) {
-            console.log('PEER:', data);
-        });
     });
 
     useEffect(() => {
@@ -140,13 +137,23 @@ export const ModalVideoCall = ({
             onOk={() => handleClose(type)}
             onCancel={() => handleClose(type)}
             footer={null}
-            width={800}
+            width={1200}
         >
-            <div className="user-contact">
-                <div className="name">Video call</div>
-                <Button onClick={() => setIsOpenCam(!isOpenCam)}>Camera</Button>
-                <video ref={localVideoRef} width={300} height={300}></video>
-                <video ref={remoteVideoRef} width={400} height={400}></video>
+            <div className="modal-video-call">
+                {/* <Button onClick={() => setIsOpenCam(!isOpenCam)}>Camera</Button> */}
+                <video ref={remoteVideoRef} className="remote-video"></video>
+                <video ref={localVideoRef} className="local-video"></video>
+                <div className="video-feature">
+                    <div className="feature-item show-hide-mic">
+                        <AudioOutlined />
+                    </div>
+                    <div className="feature-item end-call">
+                        <PhoneOutlined />
+                    </div>
+                    <div className="feature-item show-hide-video">
+                        <VideoCameraOutlined />
+                    </div>
+                </div>
             </div>
         </Modal>
     );

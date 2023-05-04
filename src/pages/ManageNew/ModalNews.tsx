@@ -71,7 +71,6 @@ export const ModalNews = ({
             return;
         }
         setSelectedFile(e.target.files[0]);
-        console.log('file:', e.target.files[0]);
     };
 
     const uploadImage = async () => {

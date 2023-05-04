@@ -34,7 +34,6 @@ export const ChatForm = ({ socket }: Props): React.ReactElement => {
                     });
                     const res = await messageApi.add(data);
                     if (res?.data?.data) {
-                        console.log('send message: ', res.data.data);
                         form.setFieldValue('text', '');
                     }
                 }

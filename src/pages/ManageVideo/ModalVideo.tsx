@@ -72,7 +72,6 @@ export const ModalVideo = ({
             return;
         }
         setSelectedVideo(e.target.files[0]);
-        console.log('file:', e.target.files[0]);
     };
 
     const onSelectImage = (e: any) => {
@@ -80,13 +79,10 @@ export const ModalVideo = ({
             return;
         }
         setSelectedImage(e.target.files[0]);
-        console.log('file:', e.target.files[0]);
     };
 
     const uploadVideo = async () => {
         if (!selectedVideo) {
-            console.log('jkjk', previewVideo);
-
             if (typeModal === 'add') return;
             else return previewVideo;
         }
