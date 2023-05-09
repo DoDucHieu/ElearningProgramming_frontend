@@ -1,15 +1,32 @@
-import { Button, Form, Input } from 'antd';
 import '../../asset/style/Contact.scss';
+import emailjs from '@emailjs/browser';
 import {
     MailOutlined,
     InstagramOutlined,
     FacebookOutlined,
 } from '@ant-design/icons';
-import TextArea from 'antd/es/input/TextArea';
+import { useRef } from 'react';
+import { toast } from 'react-toastify';
 export const Contact = (): React.ReactElement => {
-    const [form] = Form.useForm();
-    const onFinish = (values: any) => {
-        console.log('Success:', values);
+    const form: any = useRef();
+
+    const sendEmail = (e: any) => {
+        e.preventDefault();
+        emailjs
+            .sendForm(
+                'service_2qir8fl',
+                'template_rnqykgu',
+                form.current,
+                'QrRRO0bb5sqsoQ_Ut',
+            )
+            .then(
+                (result) => {
+                    toast.success('Liên hệ thành công!');
+                },
+                (error) => {
+                    console.log(error.text);
+                },
+            );
     };
     return (
         <div className="contact">
@@ -38,65 +55,21 @@ export const Contact = (): React.ReactElement => {
                 </div>
                 <div className="contact-right">
                     <div className="form-contact">
-                        <Form
-                            form={form}
-                            id="form-contact"
-                            name="basic"
-                            labelCol={{ span: 8 }}
-                            wrapperCol={{ span: 16 }}
-                            style={{ maxWidth: 600 }}
-                            initialValues={{ remember: true }}
-                            onFinish={onFinish}
-                            autoComplete="off"
-                        >
-                            <Form.Item
-                                name="email"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Nhập email của bạn!',
-                                    },
-                                    {
-                                        type: 'email',
-                                        message: 'Email không hợp lệ!',
-                                    },
-                                ]}
-                            >
-                                <Input placeholder="Email" />
-                            </Form.Item>
-
-                            <Form.Item
-                                name="fullName"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Nhập họ tên của bạn!',
-                                    },
-                                ]}
-                            >
-                                <Input placeholder="Họ tên" />
-                            </Form.Item>
-
-                            <Form.Item
-                                name="reason"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Nhập điều bạn muốn',
-                                    },
-                                ]}
-                            >
-                                <TextArea placeholder="Hãy cho chúng tôi biết điều bạn muốn" />
-                            </Form.Item>
-
-                            <Button
-                                type="primary"
-                                htmlType="submit"
-                                form="form-contact"
-                            >
-                                Liên hệ
-                            </Button>
-                        </Form>
+                        <form ref={form} onSubmit={sendEmail} className="form">
+                            <div className="row">
+                                <label>Họ tên</label>
+                                <input type="text" name="user_name" />
+                            </div>
+                            <div className="row">
+                                <label>Email</label>
+                                <input type="email" name="user_email" />
+                            </div>
+                            <div className="row">
+                                <label>Nội dung liên hệ</label>
+                                <textarea name="message" />
+                            </div>
+                            <input type="submit" value="Send" className="btn" />
+                        </form>
                     </div>
                 </div>
             </div>

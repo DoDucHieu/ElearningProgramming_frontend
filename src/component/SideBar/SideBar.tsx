@@ -6,12 +6,12 @@ import {
     WalletOutlined,
     PlayCircleOutlined,
 } from '@ant-design/icons';
-import shoeBG from '../../asset/image/sign_in_bg.jpg';
+import bg_admin from '../../asset/image/sign_in_bg.jpg';
 import { Layout, Menu } from 'antd';
 import { useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { AppDispatch } from '../../store/store';
-import { useDispatch } from 'react-redux';
+import { AppDispatch, RootState } from '../../store/store';
+import { useDispatch, useSelector } from 'react-redux';
 import { commonAction } from '../../store/action/commonAction';
 import { userApi } from '../../api/userApi';
 import { toast } from 'react-toastify';
@@ -73,6 +73,10 @@ export const SideBar = () => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const email = user.email;
     const userRefreshToken = user.refreshToken;
+    const userInfor = useSelector(
+        (state: RootState) => state.commonReducer.userInfo,
+    );
+
     const selectedKey = useMemo(() => {
         const item = arrTabs.find((item) => {
             return item.url === location.pathname;
@@ -112,7 +116,7 @@ export const SideBar = () => {
     return (
         <Layout.Sider>
             <div className="sidebar_logo">
-                <img src={shoeBG} alt="" />
+                <img src={bg_admin} alt="" />
             </div>
             <Menu
                 theme="dark"
@@ -125,9 +129,13 @@ export const SideBar = () => {
             />
             <div className="sidebar_login-logout">
                 <div className="user-infor">
-                    <img src={shoeBG} alt="" className="avatar" />
+                    <img
+                        src={userInfor?.avatar ?? bg_admin}
+                        alt=""
+                        className="avatar"
+                    />
                     <div className="infor">
-                        <label>Admin</label>
+                        <label>{userInfor?.fullName ?? 'Admin'}</label>
                         <label>{email}</label>
                     </div>
                 </div>

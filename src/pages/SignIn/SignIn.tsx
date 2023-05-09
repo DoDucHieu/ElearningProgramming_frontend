@@ -36,6 +36,7 @@ export const SignIn = (): React.ReactElement => {
                     accessToken: res.data.accessToken,
                     refreshToken: res.data.refreshToken,
                 };
+                localStorage.removeItem('user');
                 localStorage.setItem('user', JSON.stringify(data));
                 dispatch(
                     commonAction.changeUserInfor({

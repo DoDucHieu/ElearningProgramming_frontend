@@ -32,6 +32,7 @@ export const SignUp = (): React.ReactElement => {
                     accessToken: res.data.accessToken,
                     refreshToken: res.data.refreshToken,
                 };
+                localStorage.removeItem('user');
                 localStorage.setItem('user', JSON.stringify(data));
                 if (data.role === 'user') navigate('/');
                 if (data.role === 'admin') navigate('/manage-account');

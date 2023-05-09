@@ -58,7 +58,9 @@ export const ManageOrder = (): React.ReactElement => {
             fixed: true,
             title: 'Trạng thái',
             dataIndex: 'is_purchase',
-            render: (text) => <span>{text && 'Đã thanh toán'}</span>,
+            render: (text) => (
+                <span>{!text ? 'Đã thanh toán' : 'Chưa thanh toán'}</span>
+            ),
         },
         {
             fixed: true,
