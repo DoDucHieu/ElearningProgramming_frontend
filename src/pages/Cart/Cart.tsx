@@ -12,6 +12,7 @@ import '../../asset/style/Cart.scss';
 import { cartAction } from '../../store/action/cartAction';
 import { AppDispatch, RootState } from '../../store/store';
 import { CartType, OrderType } from '../../type/type';
+import { LoadingComponent } from '../../component/LoadingComponent/LoadingComponent';
 
 export const Cart = () => {
     const navigate = useNavigate();
@@ -24,6 +25,8 @@ export const Cart = () => {
     const [subTotal, setSubTotal] = useState<number>();
     const [isOnline, setIsOnline] = useState(navigator.onLine);
     const [form] = Form.useForm();
+    const [loading, setLoading] = useState<boolean>(false);
+
     useEffect(() => {
         // Update network status
         const handleStatusChange = () => {
@@ -61,6 +64,7 @@ export const Cart = () => {
 
     const handleRemoveFromCart = async (data: any) => {
         try {
+            setLoading(true);
             const params = {
                 email: email,
                 course_id: data.course_id,
@@ -68,6 +72,8 @@ export const Cart = () => {
             await dispatch(cartAction.removeFromCart(params));
         } catch (e) {
             console.log('err: ', e);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -87,6 +93,7 @@ export const Cart = () => {
             payment_method: form.getFieldValue('paymentMethod'),
         };
         try {
+            setLoading(true);
             const resAddOrder = await orderApi.add(orderInfor);
             if (resAddOrder)
                 if (
@@ -105,6 +112,8 @@ export const Cart = () => {
                 }
         } catch (error) {
             console.log('err:', error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -221,6 +230,7 @@ export const Cart = () => {
                     </div>
                 </Col>
             </Row>
+            {loading && <LoadingComponent />}
         </div>
     );
 };

@@ -9,6 +9,7 @@ import { ModalVideo } from '../ManageVideo/ModalVideo';
 import { videoApi } from '../../api/videoApi';
 import { VideoComponent } from './VideoComponent';
 import { PaginationComponent } from '../../component/Pagination/PaginationComponent';
+import { LoadingComponent } from '../../component/LoadingComponent/LoadingComponent';
 
 export const ListVideo = (): React.ReactElement => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -20,6 +21,7 @@ export const ListVideo = (): React.ReactElement => {
     const [listNews, setListNews] = useState<NewsType[]>();
     const [totalRecord, setTotalRecord] = useState<number>();
     const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
         handleGetAllVideo({
@@ -43,6 +45,10 @@ export const ListVideo = (): React.ReactElement => {
 
     const handleClose = () => {
         setIsOpenModal(false);
+    };
+
+    const handleSetLoading = (value: boolean) => {
+        setLoading(value);
     };
 
     return (
@@ -85,8 +91,10 @@ export const ListVideo = (): React.ReactElement => {
                     handleClose={handleClose}
                     getAllVideo={handleGetAllVideo}
                     typeModal={'add'}
+                    setLoading={handleSetLoading}
                 />
             )}
+            {loading && <LoadingComponent />}
         </div>
     );
 };

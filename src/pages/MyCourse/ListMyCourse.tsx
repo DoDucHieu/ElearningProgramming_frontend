@@ -1,14 +1,11 @@
 import { Col, Row } from 'antd';
-import '../../asset/style/ListCourse.scss';
-import { CourseType } from '../../type/type';
 import { useEffect, useState } from 'react';
-import { CONSTANT } from '../../constant/constant';
 import { useSearchParams } from 'react-router-dom';
-import { SearchParams } from '../../type/common';
-import { courseApi } from '../../api/courseApi';
-import { SearchComponent } from '../../component/SearchComponent/SearchComponent';
-import { PaginationComponent } from '../../component/Pagination/PaginationComponent';
 import { myCourseApi } from '../../api/myCourseApi';
+import '../../asset/style/ListCourse.scss';
+import { PaginationComponent } from '../../component/Pagination/PaginationComponent';
+import { CONSTANT } from '../../constant/constant';
+import { CourseType } from '../../type/type';
 import { CourseComponent } from '../Course/CourseComponent';
 
 export const ListMyCourse = (): React.ReactElement => {

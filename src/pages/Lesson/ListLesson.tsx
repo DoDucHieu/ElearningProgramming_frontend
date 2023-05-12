@@ -4,6 +4,7 @@ import { CONSTANT } from '../../constant/constant';
 import { lessonApi } from '../../api/lessonApi';
 import { LessonType } from '../../type/type';
 import '../../asset/style/ListLesson.scss';
+import { LoadingComponent } from '../../component/LoadingComponent/LoadingComponent';
 
 export type Props = {
     course_id?: string;
@@ -21,6 +22,7 @@ export const ListLesson = ({
     const keyword = searchParams.get('keyword') || CONSTANT.DEFAULT_KEYWORD;
     const [listLessons, setListLessons] = useState<LessonType[]>([]);
     const [currentLesson, setCurrentLesson] = useState<string>();
+    const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
         handleGetAllLesson({
@@ -38,6 +40,7 @@ export const ListLesson = ({
 
     const handleGetAllLesson = async (params: any): Promise<any> => {
         try {
+            setLoading(true);
             const res = await lessonApi.getAll(params);
             if (res?.data?.data) {
                 setListLessons(res.data.data);
@@ -45,6 +48,8 @@ export const ListLesson = ({
             }
         } catch (error) {
             console.log(error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -73,6 +78,7 @@ export const ListLesson = ({
                     <h4>Không có bài học nào</h4>
                 </>
             )}
+            {loading && <LoadingComponent />}
         </div>
     );
 };

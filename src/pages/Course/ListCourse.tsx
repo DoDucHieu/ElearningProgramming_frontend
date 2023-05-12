@@ -10,6 +10,7 @@ import { courseApi } from '../../api/courseApi';
 import { FilterCourseComponent } from './FilterCourseComponent';
 import { SearchComponent } from '../../component/SearchComponent/SearchComponent';
 import { PaginationComponent } from '../../component/Pagination/PaginationComponent';
+import { LoadingComponent } from '../../component/LoadingComponent/LoadingComponent';
 
 export const ListCourse = (): React.ReactElement => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -21,6 +22,7 @@ export const ListCourse = (): React.ReactElement => {
     const filter = searchParams.get('filter') || CONSTANT.DEFAULT_FILTER;
     const [listCourses, setListCourses] = useState<CourseType[]>();
     const [totalRecord, setTotalRecord] = useState<number>();
+    const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
         handleGetAllCourse({
@@ -78,6 +80,7 @@ export const ListCourse = (): React.ReactElement => {
                     <PaginationComponent totalRecord={totalRecord} />
                 </div>
             </div>
+            {loading && <LoadingComponent />}
         </div>
     );
 };

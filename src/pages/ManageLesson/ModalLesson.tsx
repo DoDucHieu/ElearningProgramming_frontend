@@ -20,6 +20,7 @@ type Props = {
     getAllLesson?: (params: any) => Promise<any>;
     typeModal: string;
     dataToModal?: LessonType;
+    setLoading: any;
 };
 
 export const ModalLesson = ({
@@ -27,6 +28,7 @@ export const ModalLesson = ({
     getAllLesson,
     typeModal,
     dataToModal,
+    setLoading,
 }: Props): React.ReactElement => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const email = user.email;
@@ -84,20 +86,27 @@ export const ModalLesson = ({
     };
 
     const onFinish = async () => {
-        const videoUrl = await uploadVideo();
-        const data: LessonType = {
-            course_id,
-            name: form.getFieldValue('name'),
-            description: form.getFieldValue('description'),
-            type: typeLesson,
-            video_url: videoUrl,
-            contentHTML,
-            contentMarkdown,
-        };
-        if (typeModal === 'add') handleAddLesson(data);
-        if (typeModal === 'edit' && dataToModal) {
-            data._id = dataToModal._id;
-            handleEditLesson(data);
+        try {
+            setLoading(true);
+            const videoUrl = await uploadVideo();
+            const data: LessonType = {
+                course_id,
+                name: form.getFieldValue('name'),
+                description: form.getFieldValue('description'),
+                type: typeLesson,
+                video_url: videoUrl,
+                contentHTML,
+                contentMarkdown,
+            };
+            if (typeModal === 'add') handleAddLesson(data);
+            if (typeModal === 'edit' && dataToModal) {
+                data._id = dataToModal._id;
+                handleEditLesson(data);
+            }
+        } catch (e) {
+            console.log(e);
+        } finally {
+            setLoading(false);
         }
     };
 

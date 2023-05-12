@@ -8,6 +8,7 @@ export type CartType = {
 };
 
 export type UserType = {
+    order?: number;
     _id?: string;
     email?: string;
     password?: string;
@@ -22,18 +23,8 @@ export type UserType = {
     isBlock?: boolean;
 };
 
-export type ProductType = {
-    _id?: string;
-    productName?: string;
-    description?: string;
-    categoryId?: string;
-    categoryName?: string;
-    imgUrl?: string;
-    price?: number;
-    datePublish?: string;
-};
-
 export type OrderType = {
+    order?: number;
     order_id?: string;
     email?: string;
     list_course?: CourseType[];
@@ -44,6 +35,7 @@ export type OrderType = {
 };
 
 export type NewsType = {
+    order?: number;
     _id?: string;
     name?: string;
     description?: string;
@@ -56,6 +48,7 @@ export type NewsType = {
 };
 
 export type VideoType = {
+    order?: number;
     _id?: string;
     name?: string;
     description?: string;
@@ -67,6 +60,7 @@ export type VideoType = {
 };
 
 export type LessonType = {
+    order?: number;
     _id?: string;
     course_id?: string;
     name: string;
@@ -78,6 +72,7 @@ export type LessonType = {
 };
 
 export type CourseType = {
+    order?: number;
     _id?: string;
     name?: string;
     description?: string;

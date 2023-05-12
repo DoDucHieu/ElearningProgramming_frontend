@@ -14,6 +14,7 @@ import { toast } from 'react-toastify';
 import { SearchComponent } from '../../component/SearchComponent/SearchComponent';
 import { orderApi } from '../../api/OrderApi';
 import moment from 'moment';
+import { LoadingComponent } from '../../component/LoadingComponent/LoadingComponent';
 export const ManageOrder = (): React.ReactElement => {
     const [data, setData] = useState<OrderType[]>([]);
     const [dataToModal, setDataToModal] = useState<UserType>({});
@@ -24,47 +25,53 @@ export const ManageOrder = (): React.ReactElement => {
     const size = searchParams.get('size') || CONSTANT.DEFAULT_SIZE;
     const keyword = searchParams.get('keyword') || CONSTANT.DEFAULT_KEYWORD;
     const [totalRecord, setTotalRecord] = useState<number>();
+    const [loading, setLoading] = useState<boolean>(false);
 
     const columns: ColumnsType<OrderType> = [
         {
+            title: 'STT',
+            dataIndex: 'order',
+            width: '10%',
+        },
+        {
             title: 'Email',
             dataIndex: 'email',
-            fixed: true,
+            width: '20%',
             render: (text) => <span>{text}</span>,
         },
         {
             title: 'Danh sách khóa học',
             dataIndex: 'list_course',
-            fixed: true,
+            width: '30%',
             render: (text) => (
                 <span>{handleFormatListCourse(text).toString()}</span>
             ),
         },
         {
-            fixed: true,
             title: 'Phương thức thanh toán',
             dataIndex: 'payment_method',
+            width: '10%',
             render: (text) => <span>{text && 'Thanh toán online'}</span>,
         },
         {
-            fixed: true,
             title: 'Ngày đặt hàng',
             dataIndex: 'createdAt',
+            width: '10%',
             render: (text) => (
                 <span>{moment(text).format(CONSTANT.FORMAT_DATE_HOUR)}</span>
             ),
         },
         {
-            fixed: true,
             title: 'Trạng thái',
             dataIndex: 'is_purchase',
+            width: '10%',
             render: (text) => (
                 <span>{!text ? 'Đã thanh toán' : 'Chưa thanh toán'}</span>
             ),
         },
         {
-            fixed: true,
             title: 'Chức năng',
+            width: '10%',
             render: (record) => (
                 <>
                     <span
@@ -99,6 +106,7 @@ export const ManageOrder = (): React.ReactElement => {
 
     const handleGetAllOrder = async (params: SearchParams): Promise<any> => {
         try {
+            setLoading(true);
             const res = await orderApi.getAll(params);
             if (res?.data?.data) {
                 const arr: OrderType[] = handleFormatData(res.data.data);
@@ -107,12 +115,15 @@ export const ManageOrder = (): React.ReactElement => {
             }
         } catch (error) {
             console.log(error);
+        } finally {
+            setLoading(false);
         }
     };
 
     const handleFormatData = (data: any) => {
-        const arr: OrderType[] = data.map((item: any) => {
+        const arr: OrderType[] = data.map((item: any, index: number) => {
             return {
+                order: index + 1,
                 order_id: item._id,
                 email: item.email,
                 list_course: item.list_course,
@@ -136,6 +147,7 @@ export const ManageOrder = (): React.ReactElement => {
             icon: <></>,
             onOk: async () => {
                 try {
+                    setLoading(true);
                     const params = {
                         email,
                         order_id,
@@ -148,6 +160,8 @@ export const ManageOrder = (): React.ReactElement => {
                 } catch (error: any) {
                     console.log(error);
                     toast.error(error.message);
+                } finally {
+                    setLoading(false);
                 }
             },
             className: 'confirm__modal',
@@ -160,6 +174,10 @@ export const ManageOrder = (): React.ReactElement => {
 
     const handleClose = () => {
         setIsOpenModal(false);
+    };
+
+    const handleSetLoading = (value: boolean) => {
+        setLoading(value);
     };
 
     return (
@@ -206,8 +224,10 @@ export const ManageOrder = (): React.ReactElement => {
                     getAllOrder={handleGetAllOrder}
                     typeModal={typeModal}
                     dataToModal={dataToModal}
+                    setLoading={handleSetLoading}
                 />
             )}
+            {loading && <LoadingComponent />}
         </div>
     );
 };

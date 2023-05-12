@@ -14,6 +14,7 @@ import { SearchComponent } from '../../component/SearchComponent/SearchComponent
 import { ModalNews } from './ModalNews';
 import { newsApi } from '../../api/newsApi';
 import { ModalDetailNews } from './ModalDetailNews';
+import { LoadingComponent } from '../../component/LoadingComponent/LoadingComponent';
 export const ManageNews = (): React.ReactElement => {
     const [data, setData] = useState<NewsType[]>([]);
     const [dataToModal, setDataToModal] = useState<NewsType>({});
@@ -26,8 +27,14 @@ export const ManageNews = (): React.ReactElement => {
     const size = searchParams.get('size') || CONSTANT.DEFAULT_SIZE;
     const keyword = searchParams.get('keyword') || CONSTANT.DEFAULT_KEYWORD;
     const [totalRecord, setTotalRecord] = useState<number>();
+    const [loading, setLoading] = useState<boolean>(false);
 
     const columns: ColumnsType<NewsType> = [
+        {
+            title: 'STT',
+            dataIndex: 'order',
+            width: '10%',
+        },
         {
             title: 'Tên bài viết',
             dataIndex: 'name',
@@ -51,7 +58,7 @@ export const ManageNews = (): React.ReactElement => {
         },
 
         {
-            width: '20%',
+            width: '15%',
             title: 'Ảnh minh họa',
             dataIndex: 'img_url',
             render: (text) => (
@@ -63,7 +70,7 @@ export const ManageNews = (): React.ReactElement => {
         },
 
         {
-            width: '20%',
+            width: '15%',
             title: 'Tác giả',
             dataIndex: 'author',
             render: (text) => <span>{text}</span>,
@@ -136,6 +143,7 @@ export const ManageNews = (): React.ReactElement => {
 
     const handleGetAllNews = async (params: SearchParams): Promise<any> => {
         try {
+            setLoading(true);
             const res = await newsApi.getAll(params);
             if (res?.data?.data) {
                 const arr = handleFormatData(res.data.data);
@@ -144,12 +152,15 @@ export const ManageNews = (): React.ReactElement => {
             }
         } catch (error) {
             console.log(error);
+        } finally {
+            setLoading(false);
         }
     };
 
     const handleFormatData = (data: any) => {
-        const arr: NewsType[] = data.map((item: any) => {
+        const arr: NewsType[] = data.map((item: any, index: number) => {
             return {
+                order: index + 1,
                 _id: item._id,
                 name: item.name,
                 description: item.description,
@@ -168,6 +179,7 @@ export const ManageNews = (): React.ReactElement => {
             icon: <></>,
             onOk: async () => {
                 try {
+                    setLoading(true);
                     const params = {
                         _id,
                     };
@@ -180,6 +192,8 @@ export const ManageNews = (): React.ReactElement => {
                     console.log(error);
 
                     toast.error(error.message);
+                } finally {
+                    setLoading(false);
                 }
             },
             className: 'confirm__modal',
@@ -195,6 +209,7 @@ export const ManageNews = (): React.ReactElement => {
             icon: <></>,
             onOk: async () => {
                 try {
+                    setLoading(true);
                     const data = {
                         _id,
                     };
@@ -207,6 +222,8 @@ export const ManageNews = (): React.ReactElement => {
                     console.log(error);
 
                     toast.error(error.message);
+                } finally {
+                    setLoading(false);
                 }
             },
             className: 'confirm__modal',
@@ -224,6 +241,10 @@ export const ManageNews = (): React.ReactElement => {
 
     const handleCloseModalDetail = () => {
         setIsOpenModalDetail(false);
+    };
+
+    const handleSetLoading = (value: boolean) => {
+        setLoading(value);
     };
 
     return (
@@ -270,6 +291,7 @@ export const ManageNews = (): React.ReactElement => {
                     getAllNews={handleGetAllNews}
                     typeModal={typeModal}
                     dataToModal={dataToModal}
+                    setLoading={handleSetLoading}
                 />
             )}
             {isOpenModalDetail && (
@@ -278,6 +300,7 @@ export const ManageNews = (): React.ReactElement => {
                     handleClose={handleCloseModalDetail}
                 />
             )}
+            {loading && <LoadingComponent />}
         </div>
     );
 };

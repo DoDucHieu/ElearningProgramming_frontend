@@ -13,6 +13,7 @@ type Props = {
     getAllOrder: (params: SearchParams) => Promise<any>;
     typeModal: string;
     dataToModal: OrderType;
+    setLoading: any;
 };
 
 export const ModalOrder = ({
@@ -20,6 +21,7 @@ export const ModalOrder = ({
     getAllOrder,
     typeModal,
     dataToModal,
+    setLoading,
 }: Props): React.ReactElement => {
     const [form] = Form.useForm();
     const [searchParams] = useSearchParams();
@@ -36,14 +38,21 @@ export const ModalOrder = ({
     };
 
     const onFinish = () => {
-        const data: OrderType = {
-            email: form.getFieldValue('email'),
-            payment_method: form.getFieldValue('paymentMethod'),
-        };
-        if (typeModal === 'add') handleAddOrder(data);
-        else {
-            data.order_id = dataToModal.order_id;
-            handleEditOrder(data);
+        try {
+            setLoading(true);
+            const data: OrderType = {
+                email: form.getFieldValue('email'),
+                payment_method: form.getFieldValue('paymentMethod'),
+            };
+            if (typeModal === 'add') handleAddOrder(data);
+            else {
+                data.order_id = dataToModal.order_id;
+                handleEditOrder(data);
+            }
+        } catch (e) {
+            console.log(e);
+        } finally {
+            setLoading(false);
         }
     };
 

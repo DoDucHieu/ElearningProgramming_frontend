@@ -15,6 +15,7 @@ import { VideoType } from '../../type/type';
 import { ModalDetailVideo } from './ModalDetailVideo';
 import { ModalVideo } from './ModalVideo';
 import { videoApi } from '../../api/videoApi';
+import { LoadingComponent } from '../../component/LoadingComponent/LoadingComponent';
 export const ManageVideo = (): React.ReactElement => {
     const [data, setData] = useState<VideoType[]>([]);
     const [dataToModal, setDataToModal] = useState<VideoType>({});
@@ -27,8 +28,14 @@ export const ManageVideo = (): React.ReactElement => {
     const size = searchParams.get('size') || CONSTANT.DEFAULT_SIZE;
     const keyword = searchParams.get('keyword') || CONSTANT.DEFAULT_KEYWORD;
     const [totalRecord, setTotalRecord] = useState<number>();
+    const [loading, setLoading] = useState<boolean>(false);
 
     const columns: ColumnsType<VideoType> = [
+        {
+            title: 'STT',
+            dataIndex: 'order',
+            width: '10%',
+        },
         {
             title: 'Tên video',
             dataIndex: 'name',
@@ -52,7 +59,7 @@ export const ManageVideo = (): React.ReactElement => {
         },
 
         {
-            width: '20%',
+            width: '15%',
             title: 'Ảnh minh họa',
             dataIndex: 'img_url',
             render: (text) => (
@@ -64,7 +71,7 @@ export const ManageVideo = (): React.ReactElement => {
         },
 
         {
-            width: '20%',
+            width: '15%',
             title: 'Tác giả',
             dataIndex: 'author',
             render: (text) => <span>{text}</span>,
@@ -137,6 +144,7 @@ export const ManageVideo = (): React.ReactElement => {
 
     const handleGetAllVideo = async (params: SearchParams): Promise<any> => {
         try {
+            setLoading(true);
             const res = await videoApi.getAll(params);
             if (res?.data?.data) {
                 const arr = handleFormatData(res.data.data);
@@ -145,12 +153,15 @@ export const ManageVideo = (): React.ReactElement => {
             }
         } catch (error) {
             console.log(error);
+        } finally {
+            setLoading(false);
         }
     };
 
     const handleFormatData = (data: any) => {
-        const arr: VideoType[] = data.map((item: any) => {
+        const arr: VideoType[] = data.map((item: any, index: number) => {
             return {
+                order: index + 1,
                 _id: item._id,
                 name: item.name,
                 img_url: item.img_url,
@@ -168,6 +179,7 @@ export const ManageVideo = (): React.ReactElement => {
             icon: <></>,
             onOk: async () => {
                 try {
+                    setLoading(true);
                     const params = {
                         _id,
                     };
@@ -180,6 +192,8 @@ export const ManageVideo = (): React.ReactElement => {
                     console.log(error);
 
                     toast.error(error.message);
+                } finally {
+                    setLoading(false);
                 }
             },
             className: 'confirm__modal',
@@ -195,6 +209,7 @@ export const ManageVideo = (): React.ReactElement => {
             icon: <></>,
             onOk: async () => {
                 try {
+                    setLoading(true);
                     const data = {
                         _id,
                     };
@@ -207,6 +222,8 @@ export const ManageVideo = (): React.ReactElement => {
                     console.log(error);
 
                     toast.error(error.message);
+                } finally {
+                    setLoading(false);
                 }
             },
             className: 'confirm__modal',
@@ -224,6 +241,10 @@ export const ManageVideo = (): React.ReactElement => {
 
     const handleCloseModalDetail = () => {
         setIsOpenModalDetail(false);
+    };
+
+    const handleSetLoading = (value: boolean) => {
+        setLoading(value);
     };
 
     return (
@@ -270,6 +291,7 @@ export const ManageVideo = (): React.ReactElement => {
                     getAllVideo={handleGetAllVideo}
                     typeModal={typeModal}
                     dataToModal={dataToModal}
+                    setLoading={handleSetLoading}
                 />
             )}
             {isOpenModalDetail && (
@@ -278,6 +300,7 @@ export const ManageVideo = (): React.ReactElement => {
                     handleClose={handleCloseModalDetail}
                 />
             )}
+            {loading && <LoadingComponent />}
         </div>
     );
 };

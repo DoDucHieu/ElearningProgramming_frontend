@@ -13,6 +13,7 @@ import { CONSTANT } from '../../constant/constant';
 import { SearchParams } from '../../type/common';
 import { CourseType } from '../../type/type';
 import { ModalCourse } from './ModalCourse';
+import { LoadingComponent } from '../../component/LoadingComponent/LoadingComponent';
 export const ManageCourse = (): React.ReactElement => {
     const [data, setData] = useState<CourseType[]>([]);
     const [dataToModal, setDataToModal] = useState<CourseType>({});
@@ -24,8 +25,14 @@ export const ManageCourse = (): React.ReactElement => {
     const keyword = searchParams.get('keyword') || CONSTANT.DEFAULT_KEYWORD;
     const [totalRecord, setTotalRecord] = useState<number>();
     const navigate = useNavigate();
+    const [loading, setLoading] = useState<boolean>(false);
 
     const columns: ColumnsType<CourseType> = [
+        {
+            title: 'STT',
+            dataIndex: 'order',
+            width: '10%',
+        },
         {
             title: 'Tên khóa học',
             dataIndex: 'name',
@@ -126,8 +133,9 @@ export const ManageCourse = (): React.ReactElement => {
     };
 
     const handleFormatData = (data: any) => {
-        const arr: CourseType[] = data.map((item: any) => {
+        const arr: CourseType[] = data.map((item: any, index: number) => {
             return {
+                order: index + 1,
                 _id: item._id,
                 name: item.name,
                 description: item.description,
@@ -168,6 +176,11 @@ export const ManageCourse = (): React.ReactElement => {
     const handleClose = () => {
         setIsOpenModal(false);
     };
+
+    const handleSetLoading = (value: boolean) => {
+        setLoading(value);
+    };
+
     return (
         <div className="manage-account">
             <SearchComponent
@@ -212,8 +225,10 @@ export const ManageCourse = (): React.ReactElement => {
                     getAllCourse={handleGetAllCourse}
                     typeModal={typeModal}
                     dataToModal={dataToModal}
+                    setLoading={handleSetLoading}
                 />
             )}
+            {loading && <LoadingComponent />}
         </div>
     );
 };

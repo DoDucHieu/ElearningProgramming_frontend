@@ -1,4 +1,4 @@
-import { Button, Form, Input, Modal } from 'antd';
+import { Button, Form, Input, Modal, Spin } from 'antd';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -13,6 +13,7 @@ import '../../asset/style/ModalNews.scss';
 import { v4 } from 'uuid';
 import { storage } from '../../firebaseConfig';
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
+import { LoadingComponent } from '../../component/LoadingComponent/LoadingComponent';
 const mdParser = new MarkdownIt();
 
 type Props = {
@@ -20,6 +21,7 @@ type Props = {
     getAllNews?: (params: SearchParams) => Promise<any>;
     typeModal: string;
     dataToModal?: NewsType;
+    setLoading: any;
 };
 
 export const ModalNews = ({
@@ -27,6 +29,7 @@ export const ModalNews = ({
     getAllNews,
     typeModal,
     dataToModal,
+    setLoading,
 }: Props): React.ReactElement => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const user_id = user.user_id;
@@ -49,10 +52,7 @@ export const ModalNews = ({
     }, []);
 
     useEffect(() => {
-        if (!selectedFile) {
-            setPreview(undefined);
-            return;
-        }
+        if (!selectedFile) return;
         const objectUrl = URL.createObjectURL(selectedFile);
         setPreview(objectUrl);
         return () => URL.revokeObjectURL(objectUrl);
@@ -85,19 +85,26 @@ export const ModalNews = ({
     };
 
     const onFinish = async () => {
-        const imgUrl = await uploadImage();
-        const data: NewsType = {
-            name: form.getFieldValue('name'),
-            description: form.getFieldValue('description'),
-            contentHTML,
-            contentMarkdown,
-            img_url: imgUrl,
-            author: user_id,
-        };
-        if (typeModal === 'add') handleAddNews(data);
-        if (typeModal === 'edit' && dataToModal) {
-            data._id = dataToModal._id;
-            handleEditNews(data);
+        try {
+            setLoading(true);
+            const imgUrl = await uploadImage();
+            const data: NewsType = {
+                name: form.getFieldValue('name'),
+                description: form.getFieldValue('description'),
+                contentHTML,
+                contentMarkdown,
+                img_url: imgUrl,
+                author: user_id,
+            };
+            if (typeModal === 'add') await handleAddNews(data);
+            if (typeModal === 'edit' && dataToModal) {
+                data._id = dataToModal._id;
+                await handleEditNews(data);
+            }
+        } catch (e) {
+            console.log(e);
+        } finally {
+            setLoading(false);
         }
     };
 

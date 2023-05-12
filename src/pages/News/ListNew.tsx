@@ -9,6 +9,7 @@ import { SearchParams } from '../../type/common';
 import { newsApi } from '../../api/newsApi';
 import { ModalNews } from '../ManageNew/ModalNews';
 import { PaginationComponent } from '../../component/Pagination/PaginationComponent';
+import { LoadingComponent } from '../../component/LoadingComponent/LoadingComponent';
 
 export const ListNew = (): React.ReactElement => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -20,6 +21,7 @@ export const ListNew = (): React.ReactElement => {
     const [listNews, setListNews] = useState<NewsType[]>();
     const [totalRecord, setTotalRecord] = useState<number>();
     const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
         handleGetAllNews({
@@ -43,6 +45,10 @@ export const ListNew = (): React.ReactElement => {
 
     const handleClose = () => {
         setIsOpenModal(false);
+    };
+
+    const handleSetLoading = (value: boolean) => {
+        setLoading(value);
     };
 
     return (
@@ -85,8 +91,10 @@ export const ListNew = (): React.ReactElement => {
                     handleClose={handleClose}
                     getAllNews={handleGetAllNews}
                     typeModal={'add'}
+                    setLoading={handleSetLoading}
                 />
             )}
+            {loading && <LoadingComponent />}
         </div>
     );
 };

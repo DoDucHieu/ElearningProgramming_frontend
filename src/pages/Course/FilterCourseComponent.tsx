@@ -3,6 +3,7 @@ import { useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import '../../asset/style/FilterCourseComponent.scss';
 import { CONSTANT } from '../../constant/constant';
+import { LoadingComponent } from '../../component/LoadingComponent/LoadingComponent';
 
 export const FilterCourseComponent = (): React.ReactElement => {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -10,6 +11,7 @@ export const FilterCourseComponent = (): React.ReactElement => {
     const page = searchParams.get('page') || CONSTANT.DEFAULT_PAGE;
     const size = searchParams.get('size') || CONSTANT.DEFAULT_SIZE;
     const keyword = searchParams.get('keyword') || CONSTANT.DEFAULT_KEYWORD;
+    const [loading, setLoading] = useState<boolean>(false);
 
     const [optionCourseType, setOptionCourseType] = useState<any>([
         { key: 0, minPrice: undefined, maxPrice: 0, isChecked: false }, // free
@@ -57,6 +59,7 @@ export const FilterCourseComponent = (): React.ReactElement => {
             }
         });
         setOptionCourseType([...arr]);
+        setLoading(true);
         timeOut.current = setTimeout(() => {
             const filter: any = {
                 minPrice: item.minPrice,
@@ -64,7 +67,8 @@ export const FilterCourseComponent = (): React.ReactElement => {
             };
             searchParams.set('filter', temp ? JSON.stringify(filter) : '');
             setSearchParams(searchParams);
-        }, 1000);
+            setLoading(false);
+        }, 500);
     };
 
     const handleCheckBoxPrice = (item: any) => {
@@ -84,6 +88,7 @@ export const FilterCourseComponent = (): React.ReactElement => {
             } else return { ...option, isChecked: false };
         });
         setOptionsPrice([...arr]);
+        setLoading(true);
         timeOut.current = setTimeout(() => {
             const filter: any = {
                 minPrice: item.minPrice,
@@ -91,7 +96,8 @@ export const FilterCourseComponent = (): React.ReactElement => {
             };
             searchParams.set('filter', temp ? JSON.stringify(filter) : '');
             setSearchParams(searchParams);
-        }, 1000);
+            setLoading(false);
+        }, 500);
     };
 
     return (
@@ -140,6 +146,7 @@ export const FilterCourseComponent = (): React.ReactElement => {
                         })}
                 </div>
             )}
+            {loading && <LoadingComponent />}
         </div>
     );
 };

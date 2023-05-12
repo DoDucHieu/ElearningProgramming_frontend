@@ -15,6 +15,7 @@ type Props = {
     getAllCourse?: (params: SearchParams) => Promise<any>;
     typeModal: string;
     dataToModal?: CourseType;
+    setLoading: any;
 };
 
 export const ModalCourse = ({
@@ -22,6 +23,7 @@ export const ModalCourse = ({
     getAllCourse,
     typeModal,
     dataToModal,
+    setLoading,
 }: Props): React.ReactElement => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const email = user.email;
@@ -37,10 +39,7 @@ export const ModalCourse = ({
     }, []);
 
     useEffect(() => {
-        if (!selectedFile) {
-            setPreview(undefined);
-            return;
-        }
+        if (!selectedFile) return;
         const objectUrl = URL.createObjectURL(selectedFile);
         setPreview(objectUrl);
         return () => URL.revokeObjectURL(objectUrl);
@@ -72,17 +71,24 @@ export const ModalCourse = ({
     };
 
     const onFinish = async () => {
-        const imgUrl = await uploadImage();
-        const data: CourseType = {
-            name: form.getFieldValue('name'),
-            description: form.getFieldValue('description'),
-            img_url: imgUrl,
-            price: form.getFieldValue('price'),
-        };
-        if (typeModal === 'add') handleAddCourse(data);
-        if (typeModal === 'edit' && dataToModal) {
-            data._id = dataToModal._id;
-            handleEditCourse(data);
+        try {
+            setLoading(true);
+            const imgUrl = await uploadImage();
+            const data: CourseType = {
+                name: form.getFieldValue('name'),
+                description: form.getFieldValue('description'),
+                img_url: imgUrl,
+                price: form.getFieldValue('price'),
+            };
+            if (typeModal === 'add') handleAddCourse(data);
+            if (typeModal === 'edit' && dataToModal) {
+                data._id = dataToModal._id;
+                handleEditCourse(data);
+            }
+        } catch (e) {
+            console.log(e);
+        } finally {
+            setLoading(false);
         }
     };
 

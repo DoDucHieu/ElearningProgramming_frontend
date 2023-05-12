@@ -3,20 +3,18 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { courseApi } from '../../api/courseApi';
 import { newsApi } from '../../api/newsApi';
-import { productApi } from '../../api/productApi';
 import { videoApi } from '../../api/videoApi';
 import '../../asset/style/Home.scss';
 import programming from '../../asset/video/programming.mp4';
 import { CONSTANT } from '../../constant/constant';
 import { SearchParams } from '../../type/common';
-import { CourseType, NewsType, ProductType, VideoType } from '../../type/type';
+import { CourseType, NewsType, VideoType } from '../../type/type';
 import { CourseComponent } from '../Course/CourseComponent';
 import { NewComponent } from '../News/NewComponent';
 import { VideoComponent } from '../Video/VideoComponent';
 
 export const Home = (): React.ReactElement => {
     const navigate = useNavigate();
-    const [listProduct, setListProduct] = useState<ProductType[]>([]);
     const [listFreeCourse, setListFreeCourse] = useState<CourseType[]>([]);
     const [listProCourse, setListProCourse] = useState<CourseType[]>([]);
     const [listNews, setListNews] = useState<NewsType[]>();
@@ -27,11 +25,6 @@ export const Home = (): React.ReactElement => {
     const keyword = searchParams.get('keyword') || CONSTANT.DEFAULT_KEYWORD;
 
     useEffect(() => {
-        handleGetAllProduct({
-            page,
-            size,
-            keyword,
-        });
         handleGetAllNews({
             page,
             size,
@@ -75,17 +68,6 @@ export const Home = (): React.ReactElement => {
             const res = await courseApi.getAllProCourse(params);
             if (res?.data?.data) {
                 setListProCourse(res.data.data);
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-    const handleGetAllProduct = async (params: SearchParams): Promise<any> => {
-        try {
-            const res = await productApi.getAll(params);
-            if (res?.data?.listProduct) {
-                setListProduct(res.data.listProduct);
             }
         } catch (error) {
             console.log(error);

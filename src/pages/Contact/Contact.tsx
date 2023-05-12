@@ -5,13 +5,19 @@ import {
     InstagramOutlined,
     FacebookOutlined,
 } from '@ant-design/icons';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { toast } from 'react-toastify';
+import { LoadingComponent } from '../../component/LoadingComponent/LoadingComponent';
 export const Contact = (): React.ReactElement => {
     const form: any = useRef();
+    const [loading, setLoading] = useState<boolean>(false);
+    const [fullName, setFullname] = useState<string>();
+    const [email, setEmail] = useState<string>();
+    const [reason, setReason] = useState<string>();
 
     const sendEmail = (e: any) => {
         e.preventDefault();
+        setLoading(true);
         emailjs
             .sendForm(
                 'service_2qir8fl',
@@ -26,7 +32,16 @@ export const Contact = (): React.ReactElement => {
                 (error) => {
                     console.log(error.text);
                 },
-            );
+            )
+            .catch((e) => {
+                console.log(e);
+            })
+            .finally(() => {
+                setLoading(false);
+                setFullname('');
+                setEmail('');
+                setReason('');
+            });
     };
     return (
         <div className="contact">
@@ -58,21 +73,38 @@ export const Contact = (): React.ReactElement => {
                         <form ref={form} onSubmit={sendEmail} className="form">
                             <div className="row">
                                 <label>Họ tên</label>
-                                <input type="text" name="user_name" />
+                                <input
+                                    type="text"
+                                    name="user_name"
+                                    value={fullName}
+                                    onChange={(e) =>
+                                        setFullname(e.target.value)
+                                    }
+                                />
                             </div>
                             <div className="row">
                                 <label>Email</label>
-                                <input type="email" name="user_email" />
+                                <input
+                                    type="email"
+                                    name="user_email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                />
                             </div>
                             <div className="row">
                                 <label>Nội dung liên hệ</label>
-                                <textarea name="message" />
+                                <textarea
+                                    name="message"
+                                    value={reason}
+                                    onChange={(e) => setReason(e.target.value)}
+                                />
                             </div>
                             <input type="submit" value="Send" className="btn" />
                         </form>
                     </div>
                 </div>
             </div>
+            {loading && <LoadingComponent />}
         </div>
     );
 };

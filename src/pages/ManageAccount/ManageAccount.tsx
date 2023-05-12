@@ -13,6 +13,7 @@ import { SearchParams } from '../../type/common';
 import { ConfirmModal } from '../../component/ConfirmModal/ConfirmModal';
 import { toast } from 'react-toastify';
 import { SearchComponent } from '../../component/SearchComponent/SearchComponent';
+import { LoadingComponent } from '../../component/LoadingComponent/LoadingComponent';
 export const ManageAccount = (): React.ReactElement => {
     const [data, setData] = useState<UserType[]>([]);
     const [dataToModal, setDataToModal] = useState<UserType>({});
@@ -23,32 +24,38 @@ export const ManageAccount = (): React.ReactElement => {
     const size = searchParams.get('size') || CONSTANT.DEFAULT_SIZE;
     const keyword = searchParams.get('keyword') || CONSTANT.DEFAULT_KEYWORD;
     const [totalRecord, setTotalRecord] = useState<number>();
+    const [loading, setLoading] = useState<boolean>(false);
+
     const columns: ColumnsType<UserType> = [
+        {
+            title: 'STT',
+            dataIndex: 'order',
+            width: '10%',
+        },
         {
             title: 'Email',
             dataIndex: 'email',
-            fixed: true,
+            width: '20%',
             render: (text) => <span>{text}</span>,
         },
         {
-            fixed: true,
             title: 'Full name',
             dataIndex: 'fullName',
+            width: '20%',
         },
         {
-            fixed: true,
             title: 'Role',
             dataIndex: 'role',
+            width: '10%',
         },
         {
-            fixed: true,
             title: 'Address',
             dataIndex: 'address',
+            width: '20%',
         },
         {
-            fixed: true,
-
             title: 'Chức năng',
+            width: '20%',
             render: (record) => (
                 <>
                     <span
@@ -108,6 +115,7 @@ export const ManageAccount = (): React.ReactElement => {
 
     const handleGetAllUser = async (params: SearchParams): Promise<any> => {
         try {
+            setLoading(true);
             const res = await userApi.getAllUser(params);
             if (res?.data?.data) {
                 const arr = handleFormatData(res.data.data);
@@ -116,12 +124,15 @@ export const ManageAccount = (): React.ReactElement => {
             }
         } catch (error) {
             console.log(error);
+        } finally {
+            setLoading(false);
         }
     };
 
     const handleFormatData = (data: any) => {
-        const arr: UserType[] = data.map((item: any) => {
+        const arr: UserType[] = data.map((item: any, index: number) => {
             return {
+                order: index + 1,
                 _id: item._id,
                 userName: item.userName,
                 email: item.email,
@@ -139,6 +150,7 @@ export const ManageAccount = (): React.ReactElement => {
             icon: <></>,
             onOk: async () => {
                 try {
+                    setLoading(true);
                     const params = {
                         id,
                     };
@@ -151,6 +163,8 @@ export const ManageAccount = (): React.ReactElement => {
                     console.log(error);
 
                     toast.error(error.message);
+                } finally {
+                    setLoading(false);
                 }
             },
             className: 'confirm__modal',
@@ -166,6 +180,7 @@ export const ManageAccount = (): React.ReactElement => {
             icon: <></>,
             onOk: async () => {
                 try {
+                    setLoading(true);
                     const data = {
                         email,
                         isBlock: !isBlock,
@@ -178,6 +193,8 @@ export const ManageAccount = (): React.ReactElement => {
                 } catch (error: any) {
                     console.log(error);
                     toast.error(error?.response?.data?.message);
+                } finally {
+                    setLoading(false);
                 }
             },
             className: 'confirm__modal',
@@ -194,6 +211,10 @@ export const ManageAccount = (): React.ReactElement => {
 
     const handleClose = () => {
         setIsOpenModal(false);
+    };
+
+    const handleSetLoading = (value: boolean) => {
+        setLoading(value);
     };
 
     return (
@@ -240,8 +261,10 @@ export const ManageAccount = (): React.ReactElement => {
                     getAllUser={handleGetAllUser}
                     typeModal={typeModal}
                     dataToModal={dataToModal}
+                    setLoading={handleSetLoading}
                 />
             )}
+            {loading && <LoadingComponent />}
         </div>
     );
 };

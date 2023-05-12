@@ -14,6 +14,7 @@ import { SearchParams } from '../../type/common';
 import { LessonType } from '../../type/type';
 import { ModalDetailLesson } from './ModalDetailLesson';
 import { ModalLesson } from './ModalLesson';
+import { LoadingComponent } from '../../component/LoadingComponent/LoadingComponent';
 
 export const ManageLesson = (): React.ReactElement => {
     const params = useParams();
@@ -29,8 +30,14 @@ export const ManageLesson = (): React.ReactElement => {
     const size = searchParams.get('size') || CONSTANT.DEFAULT_SIZE;
     const keyword = searchParams.get('keyword') || CONSTANT.DEFAULT_KEYWORD;
     const [totalRecord, setTotalRecord] = useState<number>();
+    const [loading, setLoading] = useState<boolean>(false);
 
     const columns: ColumnsType<LessonType> = [
+        {
+            title: 'STT',
+            dataIndex: 'order',
+            width: '10%',
+        },
         {
             title: 'Tên bài học',
             dataIndex: 'name',
@@ -109,6 +116,7 @@ export const ManageLesson = (): React.ReactElement => {
 
     const handleGetAllLesson = async (params: any): Promise<any> => {
         try {
+            setLoading(true);
             const res = await lessonApi.getAll(params);
             if (res?.data?.data) {
                 const arr = handleFormatData(res.data.data);
@@ -117,12 +125,15 @@ export const ManageLesson = (): React.ReactElement => {
             }
         } catch (error) {
             console.log(error);
+        } finally {
+            setLoading(false);
         }
     };
 
     const handleFormatData = (data: any) => {
-        const arr: LessonType[] = data.map((item: any) => {
+        const arr: LessonType[] = data.map((item: any, index: number) => {
             return {
+                order: index + 1,
                 _id: item._id,
                 course_id: item?.course_id,
                 name: item.name,
@@ -141,6 +152,7 @@ export const ManageLesson = (): React.ReactElement => {
             icon: <></>,
             onOk: async () => {
                 try {
+                    setLoading(true);
                     const params = {
                         _id,
                     };
@@ -153,6 +165,8 @@ export const ManageLesson = (): React.ReactElement => {
                     console.log(error);
 
                     toast.error(error.message);
+                } finally {
+                    setLoading(false);
                 }
             },
             className: 'confirm__modal',
@@ -169,6 +183,10 @@ export const ManageLesson = (): React.ReactElement => {
 
     const handleCloseModalDetail = () => {
         setIsOpenModalDetail(false);
+    };
+
+    const handleSetLoading = (value: boolean) => {
+        setLoading(value);
     };
 
     return (
@@ -215,6 +233,7 @@ export const ManageLesson = (): React.ReactElement => {
                     getAllLesson={handleGetAllLesson}
                     typeModal={typeModal}
                     dataToModal={dataToModal}
+                    setLoading={handleSetLoading}
                 />
             )}
             {isOpenModalDetail && (
@@ -223,6 +242,7 @@ export const ManageLesson = (): React.ReactElement => {
                     handleClose={handleCloseModalDetail}
                 />
             )}
+            {loading && <LoadingComponent />}
         </div>
     );
 };

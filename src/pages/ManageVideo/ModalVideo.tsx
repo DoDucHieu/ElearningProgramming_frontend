@@ -17,6 +17,7 @@ type Props = {
     getAllVideo?: (params: SearchParams) => Promise<any>;
     typeModal: string;
     dataToModal?: VideoType;
+    setLoading: any;
 };
 
 export const ModalVideo = ({
@@ -24,6 +25,7 @@ export const ModalVideo = ({
     getAllVideo,
     typeModal,
     dataToModal,
+    setLoading,
 }: Props): React.ReactElement => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const user_id = user.user_id;
@@ -37,20 +39,14 @@ export const ModalVideo = ({
     const [previewImage, setPreviewImage] = useState<any>();
 
     useEffect(() => {
-        if (!selectedVideo) {
-            setPreviewVideo(undefined);
-            return;
-        }
+        if (!selectedVideo) return;
         const objectUrl = URL.createObjectURL(selectedVideo);
         setPreviewVideo(objectUrl);
         return () => URL.revokeObjectURL(objectUrl);
     }, [selectedVideo]);
 
     useEffect(() => {
-        if (!selectedImage) {
-            setPreviewImage(undefined);
-            return;
-        }
+        if (!selectedImage) return;
         const objectUrl = URL.createObjectURL(selectedImage);
         setPreviewImage(objectUrl);
         return () => URL.revokeObjectURL(objectUrl);
@@ -104,19 +100,26 @@ export const ModalVideo = ({
     };
 
     const onFinish = async () => {
-        const videoUrl = await uploadVideo();
-        const imgUrl = await uploadImage();
-        const data: VideoType = {
-            name: form.getFieldValue('name'),
-            description: form.getFieldValue('description'),
-            img_url: imgUrl,
-            video_url: videoUrl,
-            author: user_id,
-        };
-        if (typeModal === 'add') handleAddVideo(data);
-        if (typeModal === 'edit' && dataToModal) {
-            data._id = dataToModal._id;
-            handleEditVideo(data);
+        try {
+            setLoading(true);
+            const videoUrl = await uploadVideo();
+            const imgUrl = await uploadImage();
+            const data: VideoType = {
+                name: form.getFieldValue('name'),
+                description: form.getFieldValue('description'),
+                img_url: imgUrl,
+                video_url: videoUrl,
+                author: user_id,
+            };
+            if (typeModal === 'add') handleAddVideo(data);
+            if (typeModal === 'edit' && dataToModal) {
+                data._id = dataToModal._id;
+                handleEditVideo(data);
+            }
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setLoading(false);
         }
     };
 
