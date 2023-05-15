@@ -28,43 +28,43 @@ export const ModalVideoCall = ({
     const navigate = useNavigate();
     const localVideoRef: any = useRef();
     const remoteVideoRef: any = useRef();
-    const [isOpenCam, setIsOpenCam] = useState<boolean>(false);
+    const [isOpenCam, setIsOpenCam] = useState<boolean>(true);
+    const [isOpenMic, setIsOpenMic] = useState<boolean>(true);
+    const userStream: any = useRef();
     const peer = new Peer(user_id);
     peer.on('open', function (id) {
         console.log('My peer ID is: ' + id);
     });
 
     useEffect(() => {
-        if (type === 'caller' && user_id && receiver_id && socket?.current) {
-            socket.current.emit('makeVideoCall', {
+        if (type === 'caller' && user_id && receiver_id && socket) {
+            socket.emit('makeVideoCall', {
                 sender_id: user_id,
                 receiver_id,
             });
-            socket.current.on(
-                `getAcceptVideoCall$${receiver_id}`,
-                (peerId: string) => {
-                    console.log(
-                        'Người dùng đã chấp nhận cuộc gọi với peer id là: ',
-                        peerId,
-                    );
-                    openStream().then((stream) => {
-                        playStream(localVideoRef, stream);
-                        peerCall(peer, peerId, stream);
-                    });
-                },
-            );
+            socket.on(`getAcceptVideoCall$${receiver_id}`, (peerId: string) => {
+                console.log(
+                    'Người dùng đã chấp nhận cuộc gọi với peer id là: ',
+                    peerId,
+                );
+                openStream().then((stream) => {
+                    playStream(localVideoRef, stream);
+                    peerCall(peer, peerId, stream);
+                    userStream.current = stream;
+                });
+            });
         }
-    }, [user_id, receiver_id, socket?.current]);
+    }, [user_id, receiver_id, socket]);
 
     useEffect(() => {
-        if (type === 'answer' && socket?.current) {
-            socket.current.emit('makeAcceptVideoCall', {
+        if (type === 'answer' && socket) {
+            socket.emit('makeAcceptVideoCall', {
                 user_id,
                 peer: user_id,
             });
             peerAnswer(peer);
         }
-    }, [user_id, socket?.current]);
+    }, [user_id, socket]);
 
     useEffect(() => {
         receiver_id && handleGetDetailUser(receiver_id);
@@ -117,19 +117,42 @@ export const ModalVideoCall = ({
                 call.on('stream', (remoteStream: any) =>
                     playStream(remoteVideoRef, remoteStream),
                 );
+                userStream.current = stream;
             });
         });
     };
 
-    // useEffect(() => {
-    //     isOpenCam &&
-    //         openStream().then((stream) => {
-    //             playStream(localVideoRef, stream);
-    //             peerCall(peer, '123', stream);
-    //         });
-    //     peerAnswer(peer);
-    // }, [isOpenCam]);
+    useEffect(() => {
+        if (isOpenCam && userStream.current)
+            showHideCam(userStream.current, true);
+        if (!isOpenCam && userStream.current)
+            showHideCam(userStream.current, false);
+    }, [isOpenCam, userStream?.current]);
 
+    useEffect(() => {
+        if (isOpenMic && userStream.current)
+            showHideMic(userStream.current, true);
+        if (!isOpenMic && userStream.current)
+            showHideMic(userStream.current, false);
+    }, [isOpenMic, userStream?.current]);
+
+    const showHideCam = (userStream: any, type: boolean) => {
+        if (userStream) {
+            const videoTrack = userStream
+                .getTracks()
+                .find((track: any) => track.kind === 'video');
+            videoTrack.enabled = type ? true : false;
+        }
+    };
+
+    const showHideMic = (userStream: any, type: boolean) => {
+        if (userStream) {
+            const audioTrack = userStream
+                .getTracks()
+                .find((track: any) => track.kind === 'audio');
+            audioTrack.enabled = type ? true : false;
+        }
+    };
     return (
         <Modal
             title={'Video call'}
@@ -140,18 +163,21 @@ export const ModalVideoCall = ({
             width={1200}
         >
             <div className="modal-video-call">
-                {/* <Button onClick={() => setIsOpenCam(!isOpenCam)}>Camera</Button> */}
                 <video ref={remoteVideoRef} className="remote-video"></video>
                 <video ref={localVideoRef} className="local-video"></video>
                 <div className="video-feature">
                     <div className="feature-item show-hide-mic">
-                        <AudioOutlined />
+                        <AudioOutlined
+                            onClick={() => setIsOpenMic(!isOpenMic)}
+                        />
                     </div>
                     <div className="feature-item end-call">
                         <PhoneOutlined />
                     </div>
                     <div className="feature-item show-hide-video">
-                        <VideoCameraOutlined />
+                        <VideoCameraOutlined
+                            onClick={() => setIsOpenCam(!isOpenCam)}
+                        />
                     </div>
                 </div>
             </div>

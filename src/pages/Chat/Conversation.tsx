@@ -32,16 +32,6 @@ export const Conversation = ({
             const res = await userApi.getDetailUserById(params);
             if (res?.data?.data) {
                 setReceive(res.data.data);
-                dispatch(
-                    conversationAction.changeReceiverAvatar(
-                        res.data.data?.avatar,
-                    ),
-                );
-                dispatch(
-                    conversationAction.changeReceiverName(
-                        res.data.data?.fullName,
-                    ),
-                );
             }
         } catch (e) {
             console.log(e);

@@ -30,12 +30,10 @@ export const ListMessage = ({ socket }: Props): React.ReactElement => {
     }, [conversation_id, user_id]);
 
     useEffect(() => {
-        console.log('socket: ', socket);
-
         conversation_id &&
             user_id &&
-            socket?.current &&
-            socket.current.on(
+            socket &&
+            socket.on(
                 `getMessage${conversation_id}`,
                 ({ senderId, conversationId, text }: any) => {
                     const data = {
@@ -46,7 +44,7 @@ export const ListMessage = ({ socket }: Props): React.ReactElement => {
                     setNewMessage(data);
                 },
             );
-    }, [socket?.current, conversation_id, user_id]);
+    }, [socket, conversation_id, user_id]);
 
     useEffect(() => {
         newMessage && setListMessage([...ListMessage, newMessage]);

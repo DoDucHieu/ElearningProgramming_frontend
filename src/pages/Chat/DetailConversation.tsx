@@ -50,15 +50,15 @@ export const DetailConversation = ({ socket }: Props): React.ReactElement => {
 
     useEffect(() => {
         user_id &&
-            socket.current &&
-            socket.current.on(`getVideoCall${user_id}`, (sender_id: string) => {
+            socket &&
+            socket.on(`getVideoCall${user_id}`, (sender_id: string) => {
                 console.log('Người đang gọi đến: ', sender_id);
                 if (sender_id) {
                     setSenderId(sender_id);
                     setIsOpenModalConfirmVideoCall(true);
                 }
             });
-    }, [socket?.current, user_id]);
+    }, [socket, user_id]);
 
     return (
         <div className="detail-conversation">

@@ -10,6 +10,9 @@ import {
 } from '@ant-design/icons';
 import { conversationApi } from '../../api/conversationApi';
 import { useNavigate } from 'react-router-dom';
+import { conversationAction } from '../../store/action/conversationAction';
+import { AppDispatch } from '../../store/store';
+import { useDispatch } from 'react-redux';
 
 export type Props = {
     receiver_id?: string;
@@ -22,6 +25,7 @@ export const ModalUserContact = ({
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const user_id = user.user_id;
     const navigate = useNavigate();
+    const dispatch: AppDispatch = useDispatch();
     const [dataView, setDataView] = useState<UserType>();
 
     useEffect(() => {
@@ -36,6 +40,7 @@ export const ModalUserContact = ({
             const res = await userApi.getDetailUserById(params);
             if (res?.data?.data) {
                 setDataView(res.data.data);
+                console.log('data view: ', res.data.data);
             }
         } catch (error) {
             console.log(error);
@@ -49,7 +54,28 @@ export const ModalUserContact = ({
                 receiver_id: receiver_id,
             };
             const res = await conversationApi.add(data);
-            if (res?.data) {
+            let conversation_id;
+            if (res?.data?.errCode === 1) {
+                conversation_id = res.data?.result[0]?._id;
+                console.log('da ton tai:', conversation_id);
+            }
+            if (res?.data?.errCode === 0) {
+                conversation_id = res.data?.result?._id;
+                console.log('chua ton tai:', conversation_id);
+            }
+            if (conversation_id && dataView) {
+                console.log('here');
+
+                dispatch(
+                    conversationAction.changeConversationId(conversation_id),
+                );
+                dispatch(
+                    conversationAction.changeReceiverName(dataView?.fullName),
+                );
+                dispatch(
+                    conversationAction.changeReceiverAvatar(dataView?.avatar),
+                );
+                dispatch(conversationAction.changeReceiverId(dataView?._id));
                 navigate('/chat');
             }
         } catch (e) {

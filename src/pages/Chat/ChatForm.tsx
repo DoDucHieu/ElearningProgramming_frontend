@@ -26,8 +26,8 @@ export const ChatForm = ({ socket }: Props): React.ReactElement => {
                     conversation_id,
                     text: form.getFieldValue('text').trim(),
                 };
-                if (data.text) {
-                    socket.current.emit('sendMessage', {
+                if (data.text && socket) {
+                    socket.emit('sendMessage', {
                         conversationId: data.conversation_id,
                         senderId: data.sender_id,
                         text: data.text,

@@ -12,6 +12,7 @@ import { ChangePasswordModal } from './ChangePasswordModal';
 import { AppDispatch } from '../../store/store';
 import { useDispatch } from 'react-redux';
 import { commonAction } from '../../store/action/commonAction';
+import { LoadingComponent } from '../../component/LoadingComponent/LoadingComponent';
 
 export const MyInfor = (): React.ReactElement => {
     const dispatch: AppDispatch = useDispatch();
@@ -23,6 +24,7 @@ export const MyInfor = (): React.ReactElement => {
     const [userData, setUserData] = useState<any>();
     const [type, setType] = useState<boolean>(true);
     const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
 
     const handleCancel = () => {
         setIsOpenModal(false);
@@ -87,6 +89,7 @@ export const MyInfor = (): React.ReactElement => {
 
     const onFinish = async (values: any) => {
         try {
+            setLoading(true);
             const imgUrl = await uploadImage();
             const data = {
                 ...values,
@@ -112,6 +115,8 @@ export const MyInfor = (): React.ReactElement => {
             }
         } catch (error) {
             console.log('err: ', error);
+        } finally {
+            setLoading(false);
         }
     };
     return (
@@ -227,6 +232,7 @@ export const MyInfor = (): React.ReactElement => {
                     handleCancel={handleCancel}
                 />
             )}
+            {loading && <LoadingComponent />}
         </div>
     );
 };
