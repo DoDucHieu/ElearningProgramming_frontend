@@ -1,7 +1,8 @@
 .list-message{
-    height: 500px;
+    height: 550px;
     overflow-y: scroll;
     scroll-behavior: smooth;
+    padding: 0px 4px;
 }
 
 .list-message::-webkit-scrollbar {

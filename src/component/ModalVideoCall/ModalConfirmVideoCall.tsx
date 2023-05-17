@@ -1,15 +1,10 @@
-import '../../asset/style/ModalUserContact.scss';
-import { useEffect, useState } from 'react';
+import { PhoneOutlined } from '@ant-design/icons';
 import { Modal } from 'antd';
-import {
-    PhoneOutlined,
-    VideoCameraOutlined,
-    MessageOutlined,
-} from '@ant-design/icons';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { userApi } from '../../api/userApi';
+import '../../asset/style/ModalConfirmVideoCall.scss';
 import { UserType } from '../../type/type';
-import { ModalVideoCall } from './ModalVideoCall';
 
 export type Props = {
     sender_id?: string;
@@ -46,24 +41,36 @@ export const ModalConfirmVideoCall = ({
         }
     };
 
+    const handleDeclineVideoCall = () => {
+        if (user_id && socket) {
+            socket.emit('makeDeclineVideoCall', user_id);
+            handleClose();
+        }
+    };
+
     return (
         <Modal
             title={'Người dùng đang gọi đến'}
             open={true}
-            onOk={handleClose}
             onCancel={handleClose}
             footer={null}
             width={800}
         >
-            <div className="user-contact">
+            <div className="receiver">
                 <img className="avatar" src={dataView?.avatar} />
                 <div className="name">{dataView?.fullName}</div>
                 <div className="feature">
-                    <span className="message">
-                        <MessageOutlined />
-                    </span>
                     <div className="seperate"></div>
-                    <span className="call" onClick={handleAcceptVideoCall}>
+                    <span
+                        className="call call-accept"
+                        onClick={handleAcceptVideoCall}
+                    >
+                        <PhoneOutlined />
+                    </span>
+                    <span
+                        className="call call-decline"
+                        onClick={handleDeclineVideoCall}
+                    >
                         <PhoneOutlined />
                     </span>
                 </div>

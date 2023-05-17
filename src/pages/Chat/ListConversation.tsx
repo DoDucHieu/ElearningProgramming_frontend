@@ -23,8 +23,6 @@ export const ListConversation = ({
         user_id && handleGetAllConversation(user_id);
     }, [user_id]);
 
-    console.log('lisst: ', ListConversation);
-
     const handleGetAllConversation = async (user_id: string): Promise<any> => {
         try {
             const params = {
@@ -40,7 +38,6 @@ export const ListConversation = ({
                             : res.data.data[0].members[0],
                     );
                     if (result) {
-                        console.log('first: ', result);
                         dispatch(
                             conversationAction.changeConversationId(
                                 res.data.data[0]._id,

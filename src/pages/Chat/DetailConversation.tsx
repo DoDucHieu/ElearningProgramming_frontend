@@ -46,6 +46,7 @@ export const DetailConversation = ({ socket }: Props): React.ReactElement => {
 
     const handleAcceptVideoCall = () => {
         setAcceptVideoCall(true);
+        handleCloseModalConfirmVideoCall();
     };
 
     useEffect(() => {
@@ -89,6 +90,7 @@ export const DetailConversation = ({ socket }: Props): React.ReactElement => {
                             handleClose={handleCloseModalVideoCall}
                             socket={socket}
                             receiver_id={receiver_id}
+                            sender_id={senderId}
                             type="caller"
                         />
                     )}
@@ -110,6 +112,7 @@ export const DetailConversation = ({ socket }: Props): React.ReactElement => {
             )}
             {senderId && acceptVideoCall && (
                 <ModalVideoCall
+                    sender_id={senderId}
                     handleClose={handleCloseModalVideoCall}
                     socket={socket}
                     type="answer"

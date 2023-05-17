@@ -69,7 +69,6 @@ export const ListMessage = ({ socket }: Props): React.ReactElement => {
             };
             const res = await messageApi.getAll(params);
             if (res?.data?.data) {
-                console.log(res.data.data);
                 setListMessage(res.data.data);
             }
         } catch (e) {

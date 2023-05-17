@@ -44,7 +44,7 @@ export const ListLesson = ({
             const res = await lessonApi.getAll(params);
             if (res?.data?.data) {
                 setListLessons(res.data.data);
-                handleSetTotalLesson(res.data.data.length);
+                handleSetTotalLesson(res.data.data?.length);
             }
         } catch (error) {
             console.log(error);

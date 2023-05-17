@@ -2,12 +2,15 @@
     width: 100%;
     display: flex;
     align-items: center;
+    padding: 0px 4px;
     .ant-form{
         width: 100%;
+        padding: 0px !important;
         .ant-form-item{
             margin-bottom: 0;
             textarea{
                 resize: none;
+                border: 1px solid rgb(240, 240, 240);
             }
         }
     }

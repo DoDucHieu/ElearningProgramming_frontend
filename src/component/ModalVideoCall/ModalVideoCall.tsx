@@ -1,24 +1,26 @@
-import '../../asset/style/ModalVideoCall.scss';
-import { useEffect, useState, useRef } from 'react';
-import { Button, Modal } from 'antd';
 import {
+    AudioOutlined,
     PhoneOutlined,
     VideoCameraOutlined,
-    MessageOutlined,
-    AudioOutlined,
-    AudioMutedOutlined,
 } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
+import { Modal } from 'antd';
 import { Peer } from 'peerjs';
+import { useEffect, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import '../../asset/style/ModalVideoCall.scss';
+import { RootState } from '../../store/store';
 
 export type Props = {
     receiver_id?: string;
+    sender_id?: string;
     handleClose?: any;
     socket?: any;
     type?: string;
 };
 export const ModalVideoCall = ({
     receiver_id,
+    sender_id,
     handleClose,
     socket,
     type,
@@ -26,15 +28,27 @@ export const ModalVideoCall = ({
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const user_id = user.user_id;
     const navigate = useNavigate();
+    const receiver_avatar = useSelector(
+        (state: RootState) => state.conversationReducer.receiver_avatar,
+    );
+    const receiver_name = useSelector(
+        (state: RootState) => state.conversationReducer.receiver_name,
+    );
+    const [status, setStatus] = useState<string>('calling');
     const localVideoRef: any = useRef();
     const remoteVideoRef: any = useRef();
     const [isOpenCam, setIsOpenCam] = useState<boolean>(true);
     const [isOpenMic, setIsOpenMic] = useState<boolean>(true);
+    const [isOpenCam2, setIsOpenCam2] = useState<boolean>(true);
+    const [isOpenMic2, setIsOpenMic2] = useState<boolean>(true);
     const userStream: any = useRef();
     const peer = new Peer(user_id);
+
     peer.on('open', function (id) {
         console.log('My peer ID is: ' + id);
     });
+
+    console.log('sender: ', sender_id);
 
     useEffect(() => {
         if (type === 'caller' && user_id && receiver_id && socket) {
@@ -42,64 +56,93 @@ export const ModalVideoCall = ({
                 sender_id: user_id,
                 receiver_id,
             });
-            socket.on(`getAcceptVideoCall$${receiver_id}`, (peerId: string) => {
-                console.log(
-                    'Người dùng đã chấp nhận cuộc gọi với peer id là: ',
-                    peerId,
-                );
+
+            socket.on(`getAcceptVideoCall${receiver_id}`, (peerId: string) => {
                 openStream().then((stream) => {
                     playStream(localVideoRef, stream);
                     peerCall(peer, peerId, stream);
                     userStream.current = stream;
                 });
-            });
-        }
-    }, [user_id, receiver_id, socket]);
 
-    useEffect(() => {
-        if (type === 'answer' && socket) {
+                socket.on(`userDisconnect${receiver_id}`, (userId: string) => {
+                    console.log('Người dùng vừa ngắt kết nối: ', userId);
+                    userStream.current && endCall();
+                });
+
+                socket.on(`getEndCall${receiver_id}`, (userId: string) => {
+                    console.log('Người dùng vừa kết thúc cuộc gọi: ', userId);
+                    setStatus('finish');
+                });
+
+                socket.on(
+                    `getShowHideCamera${receiver_id}`,
+                    ({ user_id, value }: any) => {
+                        console.log(
+                            `Người dùng ${receiver_id} vừa điều chỉnh camera: ${value}`,
+                        );
+                        setIsOpenCam2(value);
+                    },
+                );
+            });
+
+            socket.on(
+                `getDeclineVideoCall${receiver_id}`,
+                (user_id: string) => {
+                    console.log(
+                        `Người dùng ${user_id} đã từ chối cuộc gọi video!`,
+                    );
+                    setStatus('decline');
+                },
+            );
+        }
+
+        if (type === 'answer' && user_id && socket) {
             socket.emit('makeAcceptVideoCall', {
                 user_id,
                 peer: user_id,
             });
             peerAnswer(peer);
-        }
-    }, [user_id, socket]);
+            console.log('sender_id: ', sender_id, user_id);
 
-    useEffect(() => {
-        receiver_id && handleGetDetailUser(receiver_id);
-    }, [receiver_id]);
+            sender_id &&
+                socket.on(`userDisconnect${sender_id}`, (userId: string) => {
+                    console.log('Người dùng vừa ngắt kết nối: ', userId);
+                    userStream.current && endCall();
+                });
 
-    const handleGetDetailUser = async (receiver_id: string): Promise<any> => {
-        try {
-            const params = {
-                user_id: receiver_id,
-            };
-        } catch (error) {
-            console.log(error);
-        }
-    };
+            sender_id &&
+                socket.on(`getEndCall${sender_id}`, (userId: string) => {
+                    console.log('Người dùng vừa kết thúc cuộc gọi: ', userId);
+                    setStatus('finish');
+                });
 
-    const handleAddConversation = async () => {
-        try {
-            const data = {
-                sender_id: user_id,
-                receiver_id: receiver_id,
-            };
-        } catch (e) {
-            console.log(e);
+            sender_id &&
+                socket.on(
+                    `getShowHideCamera${sender_id}`,
+                    ({ user_id, value }: any) => {
+                        console.log(
+                            `Người dùng ${sender_id} vừa điều chỉnh camera: ${value}`,
+                        );
+
+                        setIsOpenCam2(value);
+                    },
+                );
         }
-    };
+    }, [user_id, sender_id, receiver_id, socket]);
 
     const openStream = () => {
         const config = { audio: true, video: true };
         return navigator.mediaDevices.getUserMedia(config);
     };
 
-    const playStream = (videoRef: any, stream: any) => {
-        const video = videoRef.current;
-        video.srcObject = stream;
-        video.play();
+    const playStream = async (videoRef: any, stream: any) => {
+        try {
+            const video = videoRef.current;
+            video.srcObject = stream;
+            await video.play();
+        } catch (e) {
+            console.log('error: ', e);
+        }
     };
 
     const peerCall = (peer: any, id: string, stream: any) => {
@@ -153,34 +196,127 @@ export const ModalVideoCall = ({
             audioTrack.enabled = type ? true : false;
         }
     };
+
+    const endCall = () => {
+        try {
+            socket.emit('makeEndCall', user_id);
+            userStream?.current &&
+                userStream.current.getTracks().forEach(async (track: any) => {
+                    await track.stop();
+                });
+        } catch (e) {
+            console.log(e);
+        } finally {
+            setStatus('finish');
+        }
+    };
+
+    const handleShowHideCam = (value: boolean) => {
+        setIsOpenCam(value);
+        socket.emit('makeShowHideCamera', { user_id, value });
+    };
+
     return (
         <Modal
             title={'Video call'}
             open={true}
-            onOk={() => handleClose(type)}
-            onCancel={() => handleClose(type)}
+            onCancel={() => {
+                if (status === 'calling') endCall();
+                handleClose(type);
+            }}
             footer={null}
             width={1200}
+            maskClosable={false}
         >
-            <div className="modal-video-call">
-                <video ref={remoteVideoRef} className="remote-video"></video>
-                <video ref={localVideoRef} className="local-video"></video>
-                <div className="video-feature">
-                    <div className="feature-item show-hide-mic">
-                        <AudioOutlined
+            {status === 'calling' ? (
+                <div className="modal-video-call">
+                    <video
+                        ref={remoteVideoRef}
+                        className={
+                            isOpenCam2
+                                ? 'remote-video'
+                                : 'remote-video remote-video-hide'
+                        }
+                    ></video>
+                    <div
+                        className={
+                            isOpenCam2
+                                ? 'remote-avatar remote-avatar-hide'
+                                : 'remote-avatar'
+                        }
+                    >
+                        <img
+                            className="avatar"
+                            src={receiver_avatar && receiver_avatar}
+                        />
+                    </div>
+                    <video
+                        ref={localVideoRef}
+                        className={
+                            isOpenCam
+                                ? 'local-video'
+                                : 'local-video local-video-hide'
+                        }
+                    ></video>
+                    <div
+                        className={
+                            isOpenCam
+                                ? 'local-avatar local-avatar-hide'
+                                : 'local-avatar'
+                        }
+                    >
+                        <img
+                            className="avatar"
+                            src={user?.avatar && user.avatar}
+                        />
+                    </div>
+                    <div className="video-feature">
+                        <div
+                            className={
+                                !isOpenMic
+                                    ? 'feature-item feature-item-hide-mic'
+                                    : 'feature-item'
+                            }
                             onClick={() => setIsOpenMic(!isOpenMic)}
-                        />
-                    </div>
-                    <div className="feature-item end-call">
-                        <PhoneOutlined />
-                    </div>
-                    <div className="feature-item show-hide-video">
-                        <VideoCameraOutlined
-                            onClick={() => setIsOpenCam(!isOpenCam)}
-                        />
+                        >
+                            <AudioOutlined />
+                        </div>
+                        <div
+                            className="feature-item end-call"
+                            onClick={() => endCall()}
+                        >
+                            <PhoneOutlined />
+                        </div>
+                        <div
+                            className={
+                                !isOpenCam
+                                    ? 'feature-item feature-item-hide-cam'
+                                    : 'feature-item'
+                            }
+                            onClick={() => handleShowHideCam(!isOpenCam)}
+                        >
+                            <VideoCameraOutlined />
+                        </div>
                     </div>
                 </div>
-            </div>
+            ) : (
+                <div className="modal-end-call">
+                    <div className="receiver">
+                        <img
+                            className="avatar"
+                            src={receiver_avatar && receiver_avatar}
+                        />
+                        <div className="name">
+                            {receiver_name && receiver_name}
+                        </div>
+                        <div className="notification">
+                            {status === 'decline'
+                                ? 'Người dùng đã từ chối cuộc gọi!'
+                                : 'Cuộc trò chuyện đã kết thúc!'}
+                        </div>
+                    </div>
+                </div>
+            )}
         </Modal>
     );
 };

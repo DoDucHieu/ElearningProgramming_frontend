@@ -5,8 +5,23 @@
     justify-content: center;
     align-items: center;
     position: relative;
+    min-height: 735px;
     .remote-video{
         width: 900px;
+    }
+    .remote-video-hide{
+        display: none;
+    }
+    .remote-avatar{
+        .avatar{
+            width: 600px;
+            height: 600px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+    }
+    .remote-avatar-hide{
+        display: none;
     }
     .local-video{
         width: 300px;
@@ -14,6 +29,25 @@
         position: absolute;
         bottom: 0px;
         right: 0px;
+    }
+    .local-video-hide{
+        display: none;
+    }
+    .local-avatar{
+        width: 300px;
+        height: 200px;
+        position: absolute;
+        bottom: 0px;
+        right: 0px;
+        .avatar{
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+    }
+    .local-avatar-hide{
+        display: none;
     }
     .video-feature{
         display: flex;
@@ -25,12 +59,21 @@
             justify-content: center;
             align-items: center;
             border-radius: 50%;
-            background-color: rgb(255, 247, 237);
+            background-color: rgb(120, 255, 131);
+            color: rgb(83, 82, 82);
             margin: 0px 4px;
             cursor: pointer;
             span{
                 font-size: 20px;
             }
+        }
+        .feature-item-hide-mic{
+            background-color: rgb(253, 78, 78);
+            color: white;
+        }
+        .feature-item-hide-cam{
+            background-color: rgb(253, 78, 78);
+            color: white;
         }
         .end-call{
             background-color: rgb(253, 78, 78);
@@ -38,5 +81,14 @@
                 color: white
             }
         }
+    }
+}
+
+.modal-end-call{
+    .notification{
+        font-size: 24px;
+        font-weight: 700;
+        color: red;
+        margin-top: 40px;
     }
 }
