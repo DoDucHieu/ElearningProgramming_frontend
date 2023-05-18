@@ -5,6 +5,7 @@ import {
     LogoutOutlined,
     WalletOutlined,
     PlayCircleOutlined,
+    MessageOutlined,
 } from '@ant-design/icons';
 import bg_admin from '../../asset/image/sign_in_bg.jpg';
 import { Layout, Menu } from 'antd';
@@ -30,6 +31,7 @@ const items: any = [
     getItem('Quản lý đơn hàng', '4', <PayCircleOutlined />),
     getItem('Quản lý bài đăng', '5', <FundOutlined />),
     getItem('Quản lý video', '6', <PlayCircleOutlined />),
+    getItem('Trò chuyện', '7', <MessageOutlined />),
 ];
 
 type ArrTabsType = {
@@ -63,6 +65,11 @@ const arrTabs: ArrTabsType[] = [
         key: 6,
         tabName: 'Quản lý video',
         url: '/manage-video',
+    },
+    {
+        key: 7,
+        tabName: 'Trò chuyện',
+        url: '/chat',
     },
 ];
 
@@ -133,6 +140,7 @@ export const SideBar = () => {
                         src={userInfor?.avatar ?? bg_admin}
                         alt=""
                         className="avatar"
+                        onClick={() => navigate('/my-infor')}
                     />
                     <div className="infor">
                         <label>{userInfor?.fullName ?? 'Admin'}</label>

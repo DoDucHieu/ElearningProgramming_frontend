@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { userApi } from '../../api/userApi';
 import '../../asset/style/Conversation.scss';
 import { conversationAction } from '../../store/action/conversationAction';
-import { AppDispatch } from '../../store/store';
+import { AppDispatch, RootState } from '../../store/store';
 import { UserType } from '../../type/type';
 
 export type Props = {
@@ -17,6 +17,9 @@ export const Conversation = ({
 }: Props): React.ReactElement => {
     const dispatch: AppDispatch = useDispatch();
     const [receive, setReceive] = useState<UserType>();
+    const conversationId = useSelector(
+        (state: RootState) => state.conversationReducer.conversation_id,
+    );
 
     useEffect(() => {
         receiver_id && handleGetDetailReceiver(receiver_id);
@@ -52,7 +55,11 @@ export const Conversation = ({
 
     return (
         <div
-            className="conversation"
+            className={
+                conversationId === conversation_id
+                    ? 'conversation conversation-active'
+                    : 'conversation'
+            }
             onClick={() =>
                 handleClickChangeConversation(
                     conversation_id,

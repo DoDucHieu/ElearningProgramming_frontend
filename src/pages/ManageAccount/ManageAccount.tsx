@@ -139,7 +139,7 @@ export const ManageAccount = (): React.ReactElement => {
                 fullName: item.fullName,
                 role: item.role,
                 address: item.address,
-                isBlock: item.isBlock,
+                isBlock: item.is_blocked,
             };
         });
         return arr;
@@ -176,6 +176,8 @@ export const ManageAccount = (): React.ReactElement => {
     };
 
     const handleBlockUser = (email: string, isBlock: boolean) => {
+        console.log('1', isBlock);
+
         ConfirmModal({
             icon: <></>,
             onOk: async () => {
@@ -185,6 +187,8 @@ export const ManageAccount = (): React.ReactElement => {
                         email,
                         isBlock: !isBlock,
                     };
+                    console.log('dât:', data);
+
                     const res = await userApi.blockUser(data);
                     if (res && res.status === 200) {
                         toast.success(res.data.message);

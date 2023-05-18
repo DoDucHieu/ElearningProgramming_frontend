@@ -100,14 +100,10 @@ export const Home = (): React.ReactElement => {
             <div className="home">
                 <div className="banner">
                     <div className="page-header">
-                        <div className="page-header-title">
-                            Giới thiệu chung về website
-                        </div>
+                        <div className="page-header-title"></div>
                         <div className="page-header-content">
                             <h1>NỀN TẢNG HỌC LẬP TRÌNH TOÀN DIỆN</h1>
                             <span>
-                                {/* Platform with many courses with a variety of
-                                videos and articles. */}
                                 Nền tảng có nhiều khóa học với đa dạng video và
                                 bài viết.
                             </span>
@@ -115,7 +111,6 @@ export const Home = (): React.ReactElement => {
                                 className="join-us"
                                 onClick={() => navigate('/list-course')}
                             >
-                                {/* Course */}
                                 Khóa học
                             </div>
                         </div>
@@ -143,14 +138,7 @@ export const Home = (): React.ReactElement => {
                 <div className="page-header">
                     <div className="page-header-title"></div>
                     <div className="page-header-content">
-                        {/* <h1>ALL COURSE WITH MANY PROGRAMMING HERE</h1>
-                         */}
                         <h1>NHIỀU KHÓA HỌC VỚI ĐA DẠNG NGÔN NGỮ LẬP TRÌNH</h1>
-
-                        {/* <span>
-                            There are various courses, they are the best choice
-                            for you
-                        </span> */}
                         <span>
                             Đa dạng khóa học, nơi đây là sự lựa chọn tốt nhất
                             cho bạn.
@@ -208,13 +196,7 @@ export const Home = (): React.ReactElement => {
                 <div className="page-header">
                     <div className="page-header-title"></div>
                     <div className="page-header-content">
-                        {/* <h1>SOME POST AND VIDEO TRENDING</h1>
-                         */}
                         <h1>MỘT SỐ BÀI VIẾT VÀ VIDEO NỔI BẬT</h1>
-                        {/* <span>
-                            Highlight the unique vibe of each member of the
-                            squad in the Air Max 90.
-                        </span> */}
                         <span>
                             Tại đây chia sẻ các bài viết và video nổi bật về
                             công nghệ được quan tâm nhiều nhất.
@@ -233,14 +215,16 @@ export const Home = (): React.ReactElement => {
                         {listVideos &&
                             listVideos.map((item: VideoType) => {
                                 return (
-                                    <Col span={6}>
-                                        <VideoComponent
-                                            video_id={item._id}
-                                            name={item?.name}
-                                            view={item?.view}
-                                            img_url={item?.img_url}
-                                        />
-                                    </Col>
+                                    item?.is_approved && (
+                                        <Col span={6}>
+                                            <VideoComponent
+                                                video_id={item._id}
+                                                name={item?.name}
+                                                view={item?.view}
+                                                img_url={item?.img_url}
+                                            />
+                                        </Col>
+                                    )
                                 );
                             })}
                     </Row>
@@ -252,14 +236,16 @@ export const Home = (): React.ReactElement => {
                         {listNews &&
                             listNews.map((item: NewsType) => {
                                 return (
-                                    <Col span={6}>
-                                        <NewComponent
-                                            new_id={item._id}
-                                            name={item?.name}
-                                            view={item?.view}
-                                            img_url={item?.img_url}
-                                        />
-                                    </Col>
+                                    item?.is_approved && (
+                                        <Col span={6}>
+                                            <NewComponent
+                                                new_id={item._id}
+                                                name={item?.name}
+                                                view={item?.view}
+                                                img_url={item?.img_url}
+                                            />
+                                        </Col>
+                                    )
                                 );
                             })}
                     </Row>

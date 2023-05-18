@@ -75,7 +75,9 @@ export const ListLesson = ({
                 })
             ) : (
                 <>
-                    <h4>Không có bài học nào</h4>
+                    <h4 style={{ fontSize: 20, color: 'red', marginTop: 40 }}>
+                        Hiện chưa có bài học nào trong khóa học
+                    </h4>
                 </>
             )}
             {loading && <LoadingComponent />}
